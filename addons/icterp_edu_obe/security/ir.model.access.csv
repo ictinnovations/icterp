@@ -1,0 +1,14 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_peo_faculty,peo faculty,model_icterp_obe_peo,openeducat_core.group_op_faculty,1,0,0,0
+access_peo_manager,peo manager,model_icterp_obe_peo,openeducat_core.group_op_back_office_admin,1,1,1,1
+access_plo_faculty,plo faculty,model_icterp_obe_plo,openeducat_core.group_op_faculty,1,0,0,0
+access_plo_manager,plo manager,model_icterp_obe_plo,openeducat_core.group_op_back_office_admin,1,1,1,1
+access_clo_faculty,clo faculty,model_icterp_obe_clo,openeducat_core.group_op_faculty,1,1,1,0
+access_clo_manager,clo manager,model_icterp_obe_clo,openeducat_core.group_op_back_office_admin,1,1,1,1
+access_student_clo_faculty,student clo faculty,model_icterp_obe_student_clo,openeducat_core.group_op_faculty,1,0,0,0
+access_student_clo_manager,student clo manager,model_icterp_obe_student_clo,openeducat_core.group_op_back_office_admin,1,1,1,1
+access_class_clo_faculty,class clo faculty,model_icterp_obe_class_clo,openeducat_core.group_op_faculty,1,0,0,0
+access_class_clo_manager,class clo manager,model_icterp_obe_class_clo,openeducat_core.group_op_back_office_admin,1,1,1,1
+access_student_plo_faculty,student plo faculty,model_icterp_obe_student_plo,openeducat_core.group_op_faculty,1,0,0,0
+access_student_plo_manager,student plo manager,model_icterp_obe_student_plo,openeducat_core.group_op_back_office_admin,1,1,1,1
+access_plo_compute_manager,plo compute manager,model_icterp_obe_plo_compute,openeducat_core.group_op_back_office_admin,1,1,1,1

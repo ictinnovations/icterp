@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="mail_template_offer_letter" model="mail.template">
+        <field name="name">Admission: offer letter</field>
+        <field name="model_id" ref="openeducat_admission.model_op_admission"/>
+        <field name="subject">Offer of admission: {{ object.register_id.name }}</field>
+        <field name="email_from">{{ (object.company_id.email_formatted or user.email_formatted) }}</field>
+        <field name="email_to">{{ object.email }}</field>
+        <field name="report_template_ids" eval="[(4, ref('icterp_edu_admission.action_report_offer_letter'))]"/>
+        <field name="body_html" type="html">
+<div style="font-family: Arial, sans-serif; font-size: 14px;">
+    <p>Dear <t t-out="object.name or ''"/>,</p>
+    <p>Congratulations. You are offered admission to <strong t-out="object.course_id.name or ''"/>
+       (<t t-out="object.register_id.name or ''"/>), merit position <t t-out="object.merit_rank or ''"/>.</p>
+    <p>Pay the admission fee challan by <strong t-out="format_date(object.offer_expires_on) or ''"/> to keep your seat.
+       Your offer letter is attached. You can download the challan and check your status here:</p>
+    <p><a t-att-href="object.get_base_url() + object.status_url()">Check my application</a></p>
+    <p>Regards,<br/><t t-out="object.company_id.name or ''"/></p>
+</div>
+        </field>
+        <field name="auto_delete" eval="True"/>
+    </record>
+</odoo>

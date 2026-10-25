@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_report_transcript" model="ir.actions.report">
+        <field name="name">Transcript</field>
+        <field name="model">op.student</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">icterp_edu_academics.report_transcript</field>
+        <field name="report_file">icterp_edu_academics.report_transcript</field>
+        <field name="print_report_name">'Transcript - %s' % object.name</field>
+        <field name="binding_model_id" ref="openeducat_core.model_op_student"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <template id="report_transcript_document">
+        <t t-call="web.external_layout">
+            <div class="page" style="font-size: 12px;">
+                <h3 class="text-center mb-1">Academic Transcript</h3>
+                <p class="text-center text-muted mb-3" t-if="doc.transcript_serial">Serial <span t-out="doc.transcript_serial"/></p>
+                <table class="table table-sm table-borderless mb-3">
+                    <tr>
+                        <td><strong>Student</strong></td><td t-out="doc.name"/>
+                        <td><strong>Date of birth</strong></td><td t-out="doc.birth_date" t-options="{'widget': 'date'}"/>
+                    </tr>
+                    <tr>
+                        <td><strong>Programme</strong></td>
+                        <td t-out="', '.join(doc.course_detail_ids.mapped('course_id.name'))"/>
+                        <td><strong>Roll number</strong></td>
+                        <td t-out="', '.join([r for r in doc.course_detail_ids.mapped('roll_number') if r])"/>
+                    </tr>
+                </table>
+                <t t-foreach="doc._transcript_terms()" t-as="row">
+                    <t t-set="term" t-value="row[0]"/>
+                    <t t-set="lines" t-value="row[1]"/>
+                    <t t-set="res" t-value="row[2]"/>
+                    <h6 class="mt-3 mb-1" t-out="term.name"/>
+                    <table class="table table-sm table-bordered mb-1">
+                        <thead>
+                            <tr><th style="width:14%">Code</th><th>Course title</th><th class="text-end" style="width:10%">Credits</th><th class="text-center" style="width:10%">Grade</th><th class="text-end" style="width:12%">Points</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr t-foreach="lines" t-as="e">
+                                <td t-out="e.subject_id.code"/>
+                                <td><t t-out="e.subject_id.name"/><t t-if="e.is_repeat"> (repeat)</t></td>
+                                <td class="text-end" t-out="'%.1f' % e.credit_hours"/>
+                                <td class="text-center" t-out="e.grade_letter"/>
+                                <td class="text-end" t-out="'%.2f' % (e.grade_points * e.credit_hours) if e.state != 'withdrawn' else '-'"/>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p class="mb-2" t-if="res">
+                        Credits attempted <strong t-out="'%.1f' % res.credits_attempted"/>,
+                        earned <strong t-out="'%.1f' % res.credits_earned"/>.
+                        Term GPA <strong t-out="'%.2f' % res.gpa"/>, CGPA <strong t-out="'%.2f' % res.cgpa"/>.
+                        <t t-if="res.standing != 'good'">Standing: <strong t-out="dict(res._fields['standing'].selection).get(res.standing)"/>.</t>
+                    </p>
+                </t>
+                <p t-if="not doc._transcript_terms()" class="text-muted">No published results yet.</p>
+                <div class="row mt-5">
+                    <div class="col-6"><p>Issued on <span t-out="context_timestamp(datetime.datetime.now()).strftime('%d %B %Y')"/></p></div>
+                    <div class="col-6 text-end"><p>_________________________<br/>Controller of Examinations</p></div>
+                </div>
+                <p class="text-muted small">W = withdrawn, not counted in the GPA. Repeated courses count once in the CGPA, with the latest grade.</p>
+            </div>
+        </t>
+    </template>
+
+    <template id="report_transcript">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="icterp_edu_academics.report_transcript_document"/>
+            </t>
+        </t>
+    </template>
+</odoo>

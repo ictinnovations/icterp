@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem id="menu_entry_tests" name="Entry tests" parent="openeducat_admission.menu_op_admission_submenu" action="entry_test_action" sequence="40"/>
+</odoo>

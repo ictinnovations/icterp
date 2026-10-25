@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="exam_schedule_view_list" model="ir.ui.view">
+        <field name="name">icterp.exam.schedule.list</field>
+        <field name="model">icterp.exam.schedule</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="term_id"/>
+                <field name="kind"/>
+                <field name="date_from"/>
+                <field name="date_to"/>
+                <field name="state" widget="badge" decoration-success="state == 'published'"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="exam_schedule_view_form" model="ir.ui.view">
+        <field name="name">icterp.exam.schedule.form</field>
+        <field name="model">icterp.exam.schedule</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_check_clashes" type="object" string="Check clashes"/>
+                    <button name="action_generate_seating" type="object" string="Generate seating plan" invisible="state == 'done'"/>
+                    <button name="action_assign_invigilators" type="object" string="Assign invigilators" invisible="state == 'done'"/>
+                    <button name="action_publish" type="object" string="Publish" class="btn-primary" invisible="state != 'draft'"/>
+                    <button name="action_print_datesheet" type="object" string="Date sheet PDF"/>
+                    <button name="action_print_seating" type="object" string="Seating plan PDF" invisible="not seat_ids"/>
+                    <button name="%(icterp_edu_datesheet.action_report_slip)d" type="action" string="Exam slips PDF" invisible="not seat_ids"/>
+                    <button name="action_done" type="object" string="Mark done" invisible="state != 'published'"/>
+                    <button name="action_draft" type="object" string="Back to draft" invisible="state != 'published'"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="oe_title"><h1><field name="name" placeholder="Fall 2026 Final Exams"/></h1></div>
+                    <group>
+                        <group>
+                            <field name="term_id"/>
+                            <field name="kind"/>
+                            <field name="date_from"/>
+                            <field name="date_to"/>
+                        </group>
+                        <group>
+                            <field name="min_invigilators"/>
+                            <field name="students_per_invigilator"/>
+                            <field name="hold_unpaid"/>
+                        </group>
+                    </group>
+                    <div class="alert alert-warning" role="alert" invisible="not clash_count">
+                        <strong><field name="clash_count" class="d-inline"/> clash(es):</strong>
+                        <field name="clash_report" nolabel="1"/>
+                    </div>
+                    <div class="alert alert-success" role="alert" invisible="clash_count or not clash_report">
+                        <field name="clash_report" nolabel="1"/>
+                    </div>
+                    <notebook>
+                        <page string="Papers" name="papers">
+                            <field name="paper_ids" readonly="state == 'done'">
+                                <list editable="bottom">
+                                    <field name="term_id" column_invisible="1"/>
+                                    <field name="offering_id"/>
+                                    <field name="date"/>
+                                    <field name="start_time" widget="float_time"/>
+                                    <field name="duration" widget="float_time"/>
+                                    <field name="room_ids" widget="many2many_tags"/>
+                                    <field name="student_count"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Seating plan" name="seating">
+                            <field name="seat_ids" readonly="1">
+                                <list>
+                                    <field name="room_id"/>
+                                    <field name="seat_no"/>
+                                    <field name="student_id"/>
+                                    <field name="paper_id"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Invigilation" name="invigilation">
+                            <field name="duty_ids">
+                                <list editable="bottom">
+                                    <field name="date"/>
+                                    <field name="start_time" widget="float_time"/>
+                                    <field name="end_time" widget="float_time"/>
+                                    <field name="room_id"/>
+                                    <field name="faculty_id"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="exam_schedule_action" model="ir.actions.act_window">
+        <field name="name">Date sheets</field>
+        <field name="res_model">icterp.exam.schedule</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Plan the first exams of the term</p>
+            <p>Add one paper per course with its date, time and rooms, check clashes, generate the seating plan and invigilation duties, then publish. Students see their papers, rooms and seats in the portal.</p>
+        </field>
+    </record>
+
+    <record id="exam_duty_view_list" model="ir.ui.view">
+        <field name="name">icterp.exam.duty.list</field>
+        <field name="model">icterp.exam.duty</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="schedule_id"/>
+                <field name="date"/>
+                <field name="start_time" widget="float_time"/>
+                <field name="end_time" widget="float_time"/>
+                <field name="room_id"/>
+                <field name="faculty_id"/>
+            </list>
+        </field>
+    </record>
+    <record id="exam_duty_view_search" model="ir.ui.view">
+        <field name="name">icterp.exam.duty.search</field>
+        <field name="model">icterp.exam.duty</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="faculty_id"/>
+                <field name="schedule_id"/>
+                <group>
+                    <filter name="by_teacher" string="Invigilator" context="{'group_by': 'faculty_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+    <record id="exam_duty_action" model="ir.actions.act_window">
+        <field name="name">Invigilation duties</field>
+        <field name="res_model">icterp.exam.duty</field>
+        <field name="view_mode">list</field>
+    </record>
+</odoo>

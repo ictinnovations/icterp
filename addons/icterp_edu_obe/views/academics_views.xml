@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="offering_view_form_obe" model="ir.ui.view">
+        <field name="name">icterp.course.offering.form.obe</field>
+        <field name="model">icterp.course.offering</field>
+        <field name="inherit_id" ref="icterp_edu_academics.offering_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header" position="inside">
+                <button name="action_compute_clo_attainment" type="object" string="Compute CLO attainment" invisible="state == 'draft'"/>
+                <button name="action_print_clo_report" type="object" string="CLO report" invisible="not obe_computed_on"/>
+            </xpath>
+            <xpath expr="//field[@name='component_ids']/list/field[@name='source']" position="before">
+                <field name="subject_id" column_invisible="1"/>
+                <field name="clo_id" optional="show"/>
+            </xpath>
+            <xpath expr="//notebook" position="inside">
+                <page string="CLO attainment" name="clo_attainment">
+                    <p class="text-muted">Computed <field name="obe_computed_on" readonly="1" class="d-inline"/>. Map questions or whole assessments to CLOs, then press Compute CLO attainment.</p>
+                    <field name="clo_attainment_ids" readonly="1">
+                        <list decoration-success="attained" decoration-danger="not attained and students_assessed">
+                            <field name="clo_id"/>
+                            <field name="level"/>
+                            <field name="plo_codes" string="PLOs"/>
+                            <field name="students_assessed"/>
+                            <field name="students_attained"/>
+                            <field name="percent_attained"/>
+                            <field name="average_percent"/>
+                            <field name="attained"/>
+                        </list>
+                    </field>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="component_view_form_obe" model="ir.ui.view">
+        <field name="name">icterp.assessment.component.form.obe</field>
+        <field name="model">icterp.assessment.component</field>
+        <field name="inherit_id" ref="icterp_edu_academics.component_view_form"/>
+        <field name="arch" type="xml">
+            <field name="external_ref" position="after">
+                <field name="subject_id" invisible="1"/>
+                <field name="clo_id" invisible="question_ids"/>
+            </field>
+            <xpath expr="//field[@name='question_ids']/list/field[@name='max_marks']" position="after">
+                <field name="subject_id" column_invisible="1"/>
+                <field name="clo_id"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

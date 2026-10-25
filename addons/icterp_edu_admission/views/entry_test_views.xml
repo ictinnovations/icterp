@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="entry_test_view_list" model="ir.ui.view">
+        <field name="name">icterp.entry.test.list</field>
+        <field name="model">icterp.entry.test</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="register_id"/>
+                <field name="date"/>
+                <field name="candidate_count"/>
+                <field name="state" widget="badge"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="entry_test_view_form" model="ir.ui.view">
+        <field name="name">icterp.entry.test.form</field>
+        <field name="model">icterp.entry.test</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_assign" type="object" string="Issue roll numbers" class="btn-primary" invisible="state == 'done'"/>
+                    <button name="action_print_admit_cards" type="object" string="Admit cards PDF" invisible="state == 'draft'"/>
+                    <button name="action_done" type="object" string="Marks complete" invisible="state != 'scheduled'"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="oe_title"><h1><field name="name" placeholder="BSCS entry test, 15 August"/></h1></div>
+                    <group>
+                        <group>
+                            <field name="register_id"/>
+                            <field name="date"/>
+                            <field name="start_time" widget="float_time"/>
+                            <field name="duration" widget="float_time"/>
+                        </group>
+                        <group>
+                            <field name="room_ids" widget="many2many_tags"/>
+                            <field name="total_marks"/>
+                            <field name="roll_prefix"/>
+                        </group>
+                    </group>
+                    <field name="instructions"/>
+                    <field name="admission_ids">
+                        <list editable="bottom" create="false" delete="false">
+                            <field name="test_roll_no" readonly="1"/>
+                            <field name="name" readonly="1"/>
+                            <field name="test_room_id"/>
+                            <field name="test_marks"/>
+                            <field name="interview_marks" optional="show"/>
+                            <field name="aggregate" readonly="1"/>
+                        </list>
+                    </field>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="entry_test_action" model="ir.actions.act_window">
+        <field name="name">Entry tests</field>
+        <field name="res_model">icterp.entry.test</field>
+        <field name="view_mode">list,form</field>
+    </record>
+</odoo>

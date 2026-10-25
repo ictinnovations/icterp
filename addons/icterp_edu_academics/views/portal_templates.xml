@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="portal_education_academics" inherit_id="icterp_edu_portal.portal_my_education_student">
+        <xpath expr="//div[@id='icterp_edu_extra_sections']" position="before">
+            <section id="academic_record" class="mb-5">
+                <div class="d-flex align-items-center justify-content-between mb-2">
+                    <h4 class="mb-0">Courses and GPA</h4>
+                    <a t-if="edu_published" t-attf-href="/my/education/#{student.id}/transcript" class="btn btn-sm btn-outline-primary">
+                        <i class="fa fa-download"/> Transcript (PDF)
+                    </a>
+                </div>
+                <t t-if="edu_registrations">
+                    <h6 class="text-muted mt-2">This term</h6>
+                    <t t-call="portal.portal_table">
+                        <thead><tr><th>Course</th><th>Teacher</th><th class="text-end">Credits</th><th>Status</th></tr></thead>
+                        <tbody>
+                            <tr t-foreach="edu_registrations" t-as="e">
+                                <td><t t-out="e.subject_id.code"/> <t t-out="e.subject_id.name"/></td>
+                                <td t-out="e.offering_id.faculty_id.name"/>
+                                <td class="text-end" t-out="'%.1f' % e.credit_hours"/>
+                                <td>
+                                    <span t-if="e.state == 'withdrawn'" class="badge text-bg-warning">Withdrawn</span>
+                                    <span t-else="" class="badge text-bg-primary">Registered</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </t>
+                </t>
+                <p t-if="not edu_registrations and not edu_term_results" class="text-muted">No course registrations yet.</p>
+                <t t-if="edu_term_results">
+                    <h6 class="text-muted mt-3">Results by term</h6>
+                    <t t-call="portal.portal_table">
+                        <thead><tr><th>Term</th><th class="text-end">Credits</th><th class="text-end">GPA</th><th class="text-end">CGPA</th><th>Standing</th></tr></thead>
+                        <tbody>
+                            <tr t-foreach="edu_term_results" t-as="r">
+                                <td t-out="r.term_id.name"/>
+                                <td class="text-end"><t t-out="'%.1f' % r.credits_earned"/> / <t t-out="'%.1f' % r.credits_attempted"/></td>
+                                <td class="text-end" t-out="'%.2f' % r.gpa"/>
+                                <td class="text-end fw-bold" t-out="'%.2f' % r.cgpa"/>
+                                <td>
+                                    <span t-if="r.standing == 'good'" class="badge text-bg-success">Good standing</span>
+                                    <span t-elif="r.standing == 'warning'" class="badge text-bg-warning">Warning</span>
+                                    <span t-elif="r.standing == 'probation'" class="badge text-bg-danger">Probation</span>
+                                    <span t-else="" class="badge text-bg-danger">Suspension</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </t>
+                </t>
+            </section>
+        </xpath>
+    </template>
+</odoo>

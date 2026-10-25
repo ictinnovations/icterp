@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_home" model="ir.actions.client">
+        <field name="name">Home</field>
+        <field name="tag">icterp_home</field>
+        <field name="target">main</field>
+    </record>
+
+    <menuitem id="menu_home"
+              name="Home"
+              action="action_home"
+              sequence="1"
+              web_icon="icterp_home,static/description/icon.png"/>
+</odoo>

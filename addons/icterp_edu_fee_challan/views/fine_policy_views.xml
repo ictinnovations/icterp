@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="fine_policy_view_list" model="ir.ui.view">
+        <field name="name">icterp.fine.policy.list</field>
+        <field name="model">icterp.fine.policy</field>
+        <field name="arch" type="xml">
+            <list editable="bottom">
+                <field name="name"/>
+                <field name="method"/>
+                <field name="amount"/>
+                <field name="grace_days"/>
+                <field name="max_amount"/>
+                <field name="product_id"/>
+            </list>
+        </field>
+    </record>
+    <record id="fine_policy_action" model="ir.actions.act_window">
+        <field name="name">Fine policies</field>
+        <field name="res_model">icterp.fine.policy</field>
+        <field name="view_mode">list</field>
+    </record>
+</odoo>

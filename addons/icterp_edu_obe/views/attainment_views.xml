@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="class_clo_view_list" model="ir.ui.view">
+        <field name="name">icterp.obe.class.clo.list</field>
+        <field name="model">icterp.obe.class.clo</field>
+        <field name="arch" type="xml">
+            <list create="false" edit="false" decoration-success="attained" decoration-danger="not attained and students_assessed">
+                <field name="term_id"/>
+                <field name="offering_id"/>
+                <field name="clo_id"/>
+                <field name="level"/>
+                <field name="plo_codes" string="PLOs"/>
+                <field name="students_assessed"/>
+                <field name="students_attained"/>
+                <field name="percent_attained"/>
+                <field name="average_percent"/>
+                <field name="attained"/>
+            </list>
+        </field>
+    </record>
+    <record id="class_clo_view_pivot" model="ir.ui.view">
+        <field name="name">icterp.obe.class.clo.pivot</field>
+        <field name="model">icterp.obe.class.clo</field>
+        <field name="arch" type="xml">
+            <pivot>
+                <field name="offering_id" type="row"/>
+                <field name="clo_id" type="col"/>
+                <field name="percent_attained" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+    <record id="class_clo_action" model="ir.actions.act_window">
+        <field name="name">CLO attainment</field>
+        <field name="res_model">icterp.obe.class.clo</field>
+        <field name="view_mode">list,pivot</field>
+    </record>
+
+    <record id="student_plo_view_list" model="ir.ui.view">
+        <field name="name">icterp.obe.student.plo.list</field>
+        <field name="model">icterp.obe.student.plo</field>
+        <field name="arch" type="xml">
+            <list create="false" edit="false" decoration-success="attained" decoration-danger="not attained">
+                <field name="student_id"/>
+                <field name="course_id"/>
+                <field name="plo_id"/>
+                <field name="percent"/>
+                <field name="clo_count"/>
+                <field name="attained"/>
+            </list>
+        </field>
+    </record>
+    <record id="student_plo_view_pivot" model="ir.ui.view">
+        <field name="name">icterp.obe.student.plo.pivot</field>
+        <field name="model">icterp.obe.student.plo</field>
+        <field name="arch" type="xml">
+            <pivot>
+                <field name="plo_id" type="row"/>
+                <field name="attained" type="col"/>
+                <field name="percent" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+    <record id="student_plo_view_search" model="ir.ui.view">
+        <field name="name">icterp.obe.student.plo.search</field>
+        <field name="model">icterp.obe.student.plo</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="student_id"/>
+                <field name="plo_id"/>
+                <field name="course_id"/>
+                <filter name="not_attained" string="Not attained" domain="[('attained', '=', False)]"/>
+                <group>
+                    <filter name="by_plo" string="PLO" context="{'group_by': 'plo_id'}"/>
+                    <filter name="by_student" string="Student" context="{'group_by': 'student_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+    <record id="student_plo_action" model="ir.actions.act_window">
+        <field name="name">PLO attainment</field>
+        <field name="res_model">icterp.obe.student.plo</field>
+        <field name="view_mode">list,pivot</field>
+    </record>
+
+    <record id="view_op_student_form_plo" model="ir.ui.view">
+        <field name="name">op.student.form.icterp.plo</field>
+        <field name="model">op.student</field>
+        <field name="inherit_id" ref="openeducat_core.view_op_student_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside">
+                <page string="Learning outcomes" name="plo">
+                    <field name="plo_attainment_ids" readonly="1">
+                        <list decoration-success="attained" decoration-danger="not attained">
+                            <field name="plo_id"/>
+                            <field name="percent"/>
+                            <field name="clo_count"/>
+                            <field name="attained"/>
+                        </list>
+                    </field>
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo>

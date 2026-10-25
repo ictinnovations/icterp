@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Teachers change assessments and marks only for courses they teach; managers everything. -->
+    <record id="rule_component_faculty_own" model="ir.rule">
+        <field name="name">Assessments: own courses</field>
+        <field name="model_id" ref="model_icterp_assessment_component"/>
+        <field name="domain_force">[('offering_id.faculty_user_id', '=', user.id)]</field>
+        <field name="groups" eval="[(4, ref('openeducat_core.group_op_faculty'))]"/>
+        <field name="perm_read" eval="False"/>
+    </record>
+    <record id="rule_component_manager_all" model="ir.rule">
+        <field name="name">Assessments: all (manager)</field>
+        <field name="model_id" ref="model_icterp_assessment_component"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('openeducat_core.group_op_back_office_admin'))]"/>
+    </record>
+    <record id="rule_question_faculty_own" model="ir.rule">
+        <field name="name">Questions: own courses</field>
+        <field name="model_id" ref="model_icterp_assessment_question"/>
+        <field name="domain_force">[('component_id.offering_id.faculty_user_id', '=', user.id)]</field>
+        <field name="groups" eval="[(4, ref('openeducat_core.group_op_faculty'))]"/>
+        <field name="perm_read" eval="False"/>
+    </record>
+    <record id="rule_question_manager_all" model="ir.rule">
+        <field name="name">Questions: all (manager)</field>
+        <field name="model_id" ref="model_icterp_assessment_question"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('openeducat_core.group_op_back_office_admin'))]"/>
+    </record>
+    <record id="rule_mark_faculty_own" model="ir.rule">
+        <field name="name">Marks: own courses</field>
+        <field name="model_id" ref="model_icterp_assessment_mark"/>
+        <field name="domain_force">[('offering_id.faculty_user_id', '=', user.id)]</field>
+        <field name="groups" eval="[(4, ref('openeducat_core.group_op_faculty'))]"/>
+        <field name="perm_read" eval="False"/>
+    </record>
+    <record id="rule_mark_manager_all" model="ir.rule">
+        <field name="name">Marks: all (manager)</field>
+        <field name="model_id" ref="model_icterp_assessment_mark"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('openeducat_core.group_op_back_office_admin'))]"/>
+    </record>
+    <record id="rule_qmark_faculty_own" model="ir.rule">
+        <field name="name">Question marks: own courses</field>
+        <field name="model_id" ref="model_icterp_assessment_question_mark"/>
+        <field name="domain_force">[('mark_id.offering_id.faculty_user_id', '=', user.id)]</field>
+        <field name="groups" eval="[(4, ref('openeducat_core.group_op_faculty'))]"/>
+        <field name="perm_read" eval="False"/>
+    </record>
+    <record id="rule_qmark_manager_all" model="ir.rule">
+        <field name="name">Question marks: all (manager)</field>
+        <field name="model_id" ref="model_icterp_assessment_question_mark"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('openeducat_core.group_op_back_office_admin'))]"/>
+    </record>
+</odoo>

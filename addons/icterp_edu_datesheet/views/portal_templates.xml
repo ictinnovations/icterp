@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="portal_education_exams" inherit_id="icterp_edu_portal.portal_my_education_student">
+        <xpath expr="//div[@id='icterp_edu_extra_sections']" position="before">
+            <section id="exams" class="mb-5" t-if="edu_exams">
+                <h4>Exam schedule</h4>
+                <div t-foreach="edu_exams" t-as="ex" class="card mb-3">
+                    <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
+                        <strong t-out="ex['schedule'].name"/>
+                        <a t-if="not ex['held']" t-attf-href="/my/education/#{student.id}/exam-slip/#{ex['schedule'].id}" class="btn btn-sm btn-outline-primary">
+                            <i class="fa fa-download"/> Exam slip (PDF)
+                        </a>
+                        <span t-else="" class="badge text-bg-danger">Slip on hold: pay the overdue fee challan first</span>
+                    </div>
+                    <t t-call="portal.portal_table">
+                        <thead><tr><th>Date</th><th>Time</th><th>Paper</th><th>Room</th><th>Seat</th></tr></thead>
+                        <tbody>
+                            <tr t-foreach="ex['rows']" t-as="row">
+                                <td t-out="row[0].date" t-options="{'widget': 'date'}"/>
+                                <td t-out="row[0].time_label()"/>
+                                <td t-out="row[0].offering_id.subject_id.name"/>
+                                <td t-out="row[1].room_id.name if row[1] else ', '.join(row[0].room_ids.mapped('name'))"/>
+                                <td t-out="row[1].seat_no if row[1] else '-'"/>
+                            </tr>
+                        </tbody>
+                    </t>
+                </div>
+            </section>
+        </xpath>
+    </template>
+</odoo>

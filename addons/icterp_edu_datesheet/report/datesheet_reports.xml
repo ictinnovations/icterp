@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Date sheet -->
+    <record id="action_report_datesheet" model="ir.actions.report">
+        <field name="name">Date sheet</field>
+        <field name="model">icterp.exam.schedule</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">icterp_edu_datesheet.report_datesheet</field>
+        <field name="report_file">icterp_edu_datesheet.report_datesheet</field>
+        <field name="print_report_name">'Date sheet - %s' % object.name</field>
+        <field name="binding_model_id" ref="model_icterp_exam_schedule"/>
+        <field name="binding_type">report</field>
+    </record>
+    <template id="report_datesheet">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <h3 class="text-center" t-out="doc.name"/>
+                        <p class="text-center text-muted" t-out="doc.term_id.name"/>
+                        <table class="table table-sm table-bordered">
+                            <thead><tr><th>Date</th><th>Time</th><th>Course</th><th>Programme / batch</th><th>Rooms</th></tr></thead>
+                            <tbody>
+                                <tr t-foreach="doc.paper_ids.sorted(lambda p: (p.date, p.start_time))" t-as="p">
+                                    <td t-out="p.date" t-options="{'widget': 'date'}"/>
+                                    <td t-out="p.time_label()"/>
+                                    <td><t t-out="p.offering_id.subject_id.code"/> <t t-out="p.offering_id.subject_id.name"/></td>
+                                    <td><t t-out="p.offering_id.course_id.name"/> <t t-out="p.offering_id.batch_id.name"/> <t t-out="p.offering_id.section"/></td>
+                                    <td t-out="', '.join(p.room_ids.mapped('name'))"/>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+    <!-- Seating plan, one page per room per slot -->
+    <record id="action_report_seating" model="ir.actions.report">
+        <field name="name">Seating plan</field>
+        <field name="model">icterp.exam.schedule</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">icterp_edu_datesheet.report_seating</field>
+        <field name="report_file">icterp_edu_datesheet.report_seating</field>
+        <field name="print_report_name">'Seating plan - %s' % object.name</field>
+        <field name="binding_model_id" ref="model_icterp_exam_schedule"/>
+        <field name="binding_type">report</field>
+    </record>
+    <template id="report_seating">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-foreach="doc._seats_by_room()" t-as="block">
+                    <t t-call="web.external_layout">
+                        <div class="page">
+                            <h4><t t-out="doc.name"/>: room <t t-out="block[1].name"/></h4>
+                            <p><t t-out="block[0]"/>. Invigilators:
+                                <t t-out="', '.join(block[3].mapped('faculty_id.name')) or '-'"/></p>
+                            <table class="table table-sm table-bordered">
+                                <thead><tr><th>Seat</th><th>Student</th><th>Roll number</th><th>Paper</th><th>Signature</th></tr></thead>
+                                <tbody>
+                                    <tr t-foreach="block[2]" t-as="s">
+                                        <td t-out="s.seat_no"/>
+                                        <td t-out="s.student_id.name"/>
+                                        <td t-out="', '.join([r for r in s.student_id.course_detail_ids.mapped('roll_number') if r])"/>
+                                        <td t-out="s.paper_id.offering_id.subject_id.name"/>
+                                        <td style="width: 22%"/>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </t>
+                </t>
+            </t>
+        </t>
+    </template>
+
+    <!-- Exam slips (admit cards) -->
+    <record id="action_report_slip" model="ir.actions.report">
+        <field name="name">Exam slips</field>
+        <field name="model">icterp.exam.schedule</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">icterp_edu_datesheet.report_slip</field>
+        <field name="report_file">icterp_edu_datesheet.report_slip</field>
+        <field name="print_report_name">'Exam slips - %s' % object.name</field>
+        <field name="binding_model_id" ref="model_icterp_exam_schedule"/>
+        <field name="binding_type">report</field>
+    </record>
+    <template id="report_slip">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-set="wanted" t-value="student_ids"/>
+                <t t-set="students" t-value="doc.env['op.student'].browse(wanted) if wanted else doc.seat_ids.mapped('student_id').sorted('name')"/>
+                <t t-foreach="students" t-as="student">
+                    <t t-call="web.external_layout">
+                        <div class="page">
+                            <h4 class="text-center">Exam slip: <t t-out="doc.name"/></h4>
+                            <table class="table table-sm table-borderless mb-2">
+                                <tr>
+                                    <td style="width: 70%">
+                                        <strong t-out="student.name"/><br/>
+                                        Roll number: <t t-out="', '.join([r for r in student.course_detail_ids.mapped('roll_number') if r]) or '-'"/><br/>
+                                        <t t-out="', '.join(student.course_detail_ids.mapped('course_id.name'))"/>
+                                    </td>
+                                    <td class="text-end">
+                                        <img t-if="student.image_1920" t-att-src="image_data_uri(student.image_1920)" style="max-height: 90px;" alt=""/>
+                                    </td>
+                                </tr>
+                            </table>
+                            <t t-if="doc._slip_held(student)">
+                                <p style="color: #a00; font-weight: 700;">This slip is on hold: an overdue fee challan must be paid first.</p>
+                            </t>
+                            <t t-else="">
+                                <table class="table table-sm table-bordered">
+                                    <thead><tr><th>Date</th><th>Time</th><th>Paper</th><th>Room</th><th>Seat</th></tr></thead>
+                                    <tbody>
+                                        <tr t-foreach="student._exam_papers(doc)" t-as="row">
+                                            <td t-out="row[0].date" t-options="{'widget': 'date'}"/>
+                                            <td t-out="row[0].time_label()"/>
+                                            <td t-out="row[0].offering_id.subject_id.name"/>
+                                            <td t-out="row[1].room_id.name if row[1] else '-'"/>
+                                            <td t-out="row[1].seat_no if row[1] else '-'"/>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <p class="small text-muted">Bring this slip and your student card to every paper. Arrive 15 minutes early.</p>
+                            </t>
+                        </div>
+                    </t>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>

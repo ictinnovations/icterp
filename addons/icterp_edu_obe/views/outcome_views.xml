@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="peo_view_list" model="ir.ui.view">
+        <field name="name">icterp.obe.peo.list</field>
+        <field name="model">icterp.obe.peo</field>
+        <field name="arch" type="xml">
+            <list editable="bottom">
+                <field name="course_id"/>
+                <field name="code"/>
+                <field name="description"/>
+            </list>
+        </field>
+    </record>
+    <record id="peo_action" model="ir.actions.act_window">
+        <field name="name">PEOs</field>
+        <field name="res_model">icterp.obe.peo</field>
+        <field name="view_mode">list</field>
+    </record>
+
+    <record id="plo_view_list" model="ir.ui.view">
+        <field name="name">icterp.obe.plo.list</field>
+        <field name="model">icterp.obe.plo</field>
+        <field name="arch" type="xml">
+            <list editable="bottom">
+                <field name="sequence" widget="handle"/>
+                <field name="course_id"/>
+                <field name="code"/>
+                <field name="name"/>
+                <field name="peo_ids" widget="many2many_tags"/>
+                <field name="clo_ids" widget="many2many_tags" readonly="1" optional="show"/>
+            </list>
+        </field>
+    </record>
+    <record id="plo_view_search" model="ir.ui.view">
+        <field name="name">icterp.obe.plo.search</field>
+        <field name="model">icterp.obe.plo</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="course_id"/>
+                <field name="name"/>
+                <group><filter name="by_course" string="Programme" context="{'group_by': 'course_id'}"/></group>
+            </search>
+        </field>
+    </record>
+    <record id="plo_action" model="ir.actions.act_window">
+        <field name="name">PLOs</field>
+        <field name="res_model">icterp.obe.plo</field>
+        <field name="view_mode">list</field>
+        <field name="context">{'search_default_by_course': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Add your programme learning outcomes</p>
+            <p>HEC and PEC accredited programmes usually have 10 to 12 PLOs (engineering knowledge, problem analysis, design, ...). Map each course's CLOs to them.</p>
+        </field>
+    </record>
+
+    <record id="clo_view_list" model="ir.ui.view">
+        <field name="name">icterp.obe.clo.list</field>
+        <field name="model">icterp.obe.clo</field>
+        <field name="arch" type="xml">
+            <list editable="bottom">
+                <field name="sequence" widget="handle"/>
+                <field name="subject_id"/>
+                <field name="code"/>
+                <field name="description"/>
+                <field name="domain"/>
+                <field name="level"/>
+                <field name="plo_ids" widget="many2many_tags"/>
+            </list>
+        </field>
+    </record>
+    <record id="clo_view_search" model="ir.ui.view">
+        <field name="name">icterp.obe.clo.search</field>
+        <field name="model">icterp.obe.clo</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="subject_id"/>
+                <group><filter name="by_subject" string="Subject" context="{'group_by': 'subject_id'}"/></group>
+            </search>
+        </field>
+    </record>
+    <record id="clo_action" model="ir.actions.act_window">
+        <field name="name">CLOs</field>
+        <field name="res_model">icterp.obe.clo</field>
+        <field name="view_mode">list</field>
+        <field name="context">{'search_default_by_subject': 1}</field>
+    </record>
+
+    <record id="view_op_subject_form_clo" model="ir.ui.view">
+        <field name="name">op.subject.form.icterp.clo</field>
+        <field name="model">op.subject</field>
+        <field name="inherit_id" ref="openeducat_core.view_op_subject_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet" position="inside">
+                <separator string="Course learning outcomes (CLOs)"/>
+                <field name="clo_ids" context="{'default_subject_id': id}">
+                    <list editable="bottom">
+                        <field name="sequence" widget="handle"/>
+                        <field name="code"/>
+                        <field name="description"/>
+                        <field name="domain"/>
+                        <field name="level"/>
+                        <field name="plo_ids" widget="many2many_tags"/>
+                    </list>
+                </field>
+            </xpath>
+        </field>
+    </record>
+</odoo>

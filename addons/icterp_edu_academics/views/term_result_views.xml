@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="term_result_view_list" model="ir.ui.view">
+        <field name="name">icterp.term.result.list</field>
+        <field name="model">icterp.term.result</field>
+        <field name="arch" type="xml">
+            <list create="false" edit="false" decoration-danger="standing in ('probation', 'suspension')" decoration-warning="standing == 'warning'">
+                <field name="student_id"/>
+                <field name="term_id"/>
+                <field name="credits_attempted"/>
+                <field name="credits_earned"/>
+                <field name="gpa"/>
+                <field name="cgpa"/>
+                <field name="standing" widget="badge" decoration-danger="standing in ('probation', 'suspension')" decoration-warning="standing == 'warning'" decoration-success="standing == 'good'"/>
+            </list>
+        </field>
+    </record>
+    <record id="term_result_view_search" model="ir.ui.view">
+        <field name="name">icterp.term.result.search</field>
+        <field name="model">icterp.term.result</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="student_id"/>
+                <field name="term_id"/>
+                <filter name="deficient" string="Warning, probation or suspension" domain="[('standing', '!=', 'good')]"/>
+                <group>
+                    <filter name="by_term" string="Term" context="{'group_by': 'term_id'}"/>
+                    <filter name="by_standing" string="Standing" context="{'group_by': 'standing'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+    <record id="term_result_action" model="ir.actions.act_window">
+        <field name="name">GPA and standing</field>
+        <field name="res_model">icterp.term.result</field>
+        <field name="view_mode">list,pivot</field>
+    </record>
+</odoo>

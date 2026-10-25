@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_entry_test_faculty,entry test faculty,model_icterp_entry_test,openeducat_core.group_op_faculty,1,0,0,0
+access_entry_test_manager,entry test manager,model_icterp_entry_test,openeducat_core.group_op_back_office_admin,1,1,1,1

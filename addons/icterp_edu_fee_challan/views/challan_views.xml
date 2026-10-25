@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="challan_view_list" model="ir.ui.view">
+        <field name="name">icterp.fee.challan.list</field>
+        <field name="model">icterp.fee.challan</field>
+        <field name="arch" type="xml">
+            <list decoration-muted="state == 'cancelled'" decoration-success="state == 'paid'">
+                <field name="name"/>
+                <field name="student_id"/>
+                <field name="issue_date"/>
+                <field name="due_date"/>
+                <field name="amount" sum="Total"/>
+                <field name="fine_amount" optional="show"/>
+                <field name="paid_date" optional="show"/>
+                <field name="currency_id" column_invisible="1"/>
+                <field name="state" widget="badge" decoration-info="state == 'issued'" decoration-success="state == 'paid'"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="challan_view_form" model="ir.ui.view">
+        <field name="name">icterp.fee.challan.form</field>
+        <field name="model">icterp.fee.challan</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_issue" type="object" string="Issue" class="btn-primary" invisible="state != 'draft'"/>
+                    <button name="%(icterp_edu_fee_challan.confirm_payment_action)d" type="action" string="Confirm payment" class="btn-primary"
+                            invisible="state != 'issued'" context="{'default_challan_id': id}"/>
+                    <button name="action_print" type="object" string="Print challan" invisible="state == 'cancelled'"/>
+                    <button name="action_cancel" type="object" string="Cancel" invisible="state not in ('draft', 'issued')"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,issued,paid"/>
+                </header>
+                <sheet>
+                    <div class="oe_title"><h1><field name="name" readonly="1"/></h1></div>
+                    <group>
+                        <group>
+                            <field name="student_id" readonly="state != 'draft'"/>
+                            <field name="partner_id" readonly="state != 'draft' or student_id"/>
+                            <field name="issue_date" readonly="state != 'draft'"/>
+                            <field name="due_date" readonly="state not in ('draft', 'issued')"/>
+                            <field name="fine_policy_id" readonly="state not in ('draft', 'issued')"/>
+                            <field name="bank_ids" widget="many2many_tags" readonly="state not in ('draft', 'issued')"/>
+                        </group>
+                        <group>
+                            <field name="currency_id" invisible="1"/>
+                            <field name="amount"/>
+                            <field name="fine_today" invisible="state != 'issued'"/>
+                            <field name="paid_date" invisible="state != 'paid'"/>
+                            <field name="paid_amount" invisible="state != 'paid'"/>
+                            <field name="fine_amount" invisible="state != 'paid'"/>
+                            <field name="bank_reference" invisible="state != 'paid'"/>
+                            <field name="fine_invoice_id" invisible="not fine_invoice_id"/>
+                        </group>
+                    </group>
+                    <field name="invoice_ids" readonly="state != 'draft'" domain="[('partner_id', '=', partner_id), ('move_type', '=', 'out_invoice'), ('state', '!=', 'cancel')]">
+                        <list>
+                            <field name="name"/>
+                            <field name="invoice_date"/>
+                            <field name="invoice_date_due"/>
+                            <field name="amount_total"/>
+                            <field name="amount_residual"/>
+                            <field name="payment_state" widget="badge"/>
+                            <field name="state"/>
+                        </list>
+                    </field>
+                    <field name="payment_ids" invisible="not payment_ids" readonly="1"/>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="challan_view_search" model="ir.ui.view">
+        <field name="name">icterp.fee.challan.search</field>
+        <field name="model">icterp.fee.challan</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="student_id"/>
+                <filter name="issued" string="Waiting for payment" domain="[('state', '=', 'issued')]"/>
+                <filter name="overdue" string="Overdue" domain="[('state', '=', 'issued'), ('due_date', '&lt;', context_today().strftime('%Y-%m-%d'))]"/>
+                <filter name="paid" string="Paid" domain="[('state', '=', 'paid')]"/>
+                <group>
+                    <filter name="by_state" string="Status" context="{'group_by': 'state'}"/>
+                    <filter name="by_due" string="Due date" context="{'group_by': 'due_date'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="challan_action" model="ir.actions.act_window">
+        <field name="name">Fee challans</field>
+        <field name="res_model">icterp.fee.challan</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No challans yet</p>
+            <p>Use Generate challans to bill a batch: unbilled fee lines become invoices, and each student gets one challan with three copies to pay at the bank.</p>
+        </field>
+    </record>
+
+    <record id="view_op_student_form_challans" model="ir.ui.view">
+        <field name="name">op.student.form.icterp.challans</field>
+        <field name="model">op.student</field>
+        <field name="inherit_id" ref="openeducat_core.view_op_student_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="action_open_challans" type="object" class="oe_stat_button" icon="fa-money">
+                    <field name="challan_count" widget="statinfo" string="Challans"/>
+                </button>
+            </xpath>
+            <xpath expr="//notebook" position="inside">
+                <page string="Scholarships" name="scholarships">
+                    <field name="scholarship_ids" context="{'default_student_id': id}">
+                        <list>
+                            <field name="scholarship_id"/>
+                            <field name="percent"/>
+                            <field name="date_from"/>
+                            <field name="date_to"/>
+                            <field name="state" widget="badge"/>
+                        </list>
+                    </field>
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo>

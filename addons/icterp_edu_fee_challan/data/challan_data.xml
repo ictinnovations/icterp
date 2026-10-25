@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <record id="seq_fee_challan" model="ir.sequence">
+        <field name="name">Fee challan</field>
+        <field name="code">icterp.fee.challan</field>
+        <field name="prefix">CH%(y)s</field>
+        <field name="padding">7</field>
+    </record>
+    <record id="product_late_fine" model="product.product">
+        <field name="name">Late payment fine</field>
+        <field name="type">service</field>
+        <field name="list_price">0</field>
+        <field name="taxes_id" eval="[(6, 0, [])]"/>
+        <field name="sale_ok" eval="False"/>
+        <field name="purchase_ok" eval="False"/>
+    </record>
+    <record id="fine_policy_default" model="icterp.fine.policy">
+        <field name="name">Late fee per day (edit the amount)</field>
+        <field name="method">per_day</field>
+        <field name="amount">100</field>
+        <field name="max_amount">3000</field>
+        <field name="product_id" ref="product_late_fine"/>
+    </record>
+</odoo>

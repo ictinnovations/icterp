@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_report_admit_card" model="ir.actions.report">
+        <field name="name">Entry test admit card</field>
+        <field name="model">op.admission</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">icterp_edu_admission.report_admit_card</field>
+        <field name="report_file">icterp_edu_admission.report_admit_card</field>
+        <field name="print_report_name">'Admit card - %s' % (object.test_roll_no or object.name)</field>
+        <field name="binding_model_id" ref="openeducat_admission.model_op_admission"/>
+        <field name="binding_type">report</field>
+    </record>
+    <template id="report_admit_card">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <h3 class="text-center">Entry Test Admit Card</h3>
+                        <p class="text-center text-muted" t-out="doc.register_id.name"/>
+                        <table class="table table-sm table-bordered mt-3">
+                            <tr><td style="width: 30%"><strong>Roll number</strong></td><td style="font-size: 18px; font-weight: 700;" t-out="doc.test_roll_no or '-'"/>
+                                <td rowspan="6" style="width: 22%; text-align: center; vertical-align: middle;">
+                                    <img t-if="doc.image" t-att-src="image_data_uri(doc.image)" style="max-height: 130px;" alt=""/>
+                                    <span t-else="" class="text-muted">Paste photo</span>
+                                </td></tr>
+                            <tr><td><strong>Candidate</strong></td><td t-out="doc.name"/></tr>
+                            <tr><td><strong>Application no.</strong></td><td t-out="doc.application_number"/></tr>
+                            <tr><td><strong>Programme</strong></td><td t-out="doc.course_id.name"/></tr>
+                            <tr><td><strong>Test</strong></td>
+                                <td><t t-out="doc.entry_test_id.date" t-options="{'widget': 'date'}"/> at <t t-out="doc.entry_test_id.time_label() if doc.entry_test_id else ''"/></td></tr>
+                            <tr><td><strong>Room</strong></td><td t-out="doc.test_room_id.name or '-'"/></tr>
+                        </table>
+                        <p class="mt-3" t-out="doc.entry_test_id.instructions"/>
+                        <div class="row mt-5"><div class="col-6">Candidate signature ____________</div><div class="col-6 text-end">Invigilator ____________</div></div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+    <record id="action_report_offer_letter" model="ir.actions.report">
+        <field name="name">Offer letter</field>
+        <field name="model">op.admission</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">icterp_edu_admission.report_offer_letter</field>
+        <field name="report_file">icterp_edu_admission.report_offer_letter</field>
+        <field name="print_report_name">'Offer letter - %s' % object.name</field>
+        <field name="binding_model_id" ref="openeducat_admission.model_op_admission"/>
+        <field name="binding_type">report</field>
+    </record>
+    <template id="report_offer_letter">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="web.external_layout">
+                    <div class="page" style="font-size: 14px;">
+                        <p class="text-end" t-out="doc.offer_sent_on" t-options="{'widget': 'date'}"/>
+                        <p><strong t-out="doc.name"/><br/><t t-out="doc.street or ''"/> <t t-out="doc.city or ''"/></p>
+                        <h4 class="mt-4">Offer of admission</h4>
+                        <p>Dear <t t-out="doc.first_name"/>,</p>
+                        <p>We are pleased to offer you admission to <strong t-out="doc.course_id.name"/> in the intake
+                            <strong t-out="doc.register_id.name"/>. You are at merit position <strong t-out="doc.merit_rank"/>
+                            with an aggregate of <strong t-out="'%.2f' % doc.aggregate"/>.</p>
+                        <p>To accept, pay the admission fee challan <strong t-out="doc.admission_challan_id.name or ''"/>
+                            <t t-if="doc.admission_challan_id">(<t t-out="doc.admission_challan_id.amount" t-options="{'widget': 'monetary', 'display_currency': doc.admission_challan_id.currency_id}"/>)</t>
+                            by <strong t-out="doc.offer_expires_on" t-options="{'widget': 'date'}"/>. If it is not paid by then,
+                            the seat goes to the next candidate on the waiting list.</p>
+                        <p>Bring your original certificates, CNIC or B-form and two photographs when you report.</p>
+                        <p class="mt-5">Admissions Office<br/><t t-out="doc.company_id.name"/></p>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>

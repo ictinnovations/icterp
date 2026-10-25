@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="icterp_home.Home">
+        <div class="o_icterp_home o_action h-100 overflow-auto">
+            <div class="o_icterp_home_inner">
+                <div class="o_icterp_home_head">
+                    <div>
+                        <h1><t t-esc="greeting"/>, <t t-esc="userName"/></h1>
+                        <p t-esc="welcome"/>
+                    </div>
+                    <input type="search" class="form-control o_icterp_home_search" placeholder="Find an app"
+                           t-model="state.query" t-on-keydown="onKeydown"/>
+                </div>
+                <t t-foreach="sections" t-as="section" t-key="section.key">
+                    <section class="o_icterp_home_section">
+                        <div class="o_icterp_home_section_head">
+                            <h2 t-esc="section.title"/>
+                            <span t-if="section.hint" t-esc="section.hint"/>
+                        </div>
+                        <div class="o_icterp_home_grid">
+                            <t t-foreach="section.apps" t-as="app" t-key="app.id">
+                                <a href="#" class="o_icterp_home_tile" t-att-data-menu-xmlid="app.xmlid"
+                                   t-on-click.prevent="() => this.open(app)">
+                                    <img t-if="app.webIconData" class="o_icterp_home_icon" t-att-src="app.webIconData" t-att-alt="app.name"/>
+                                    <div t-else="" class="o_icterp_home_icon o_icterp_home_icon_fallback"
+                                         t-attf-style="background-color: {{app.webIcon?.backgroundColor or '#2563EB'}}">
+                                        <i t-att-class="app.webIcon?.iconClass or 'fa fa-cube'" t-attf-style="color: {{app.webIcon?.color or '#fff'}}"/>
+                                    </div>
+                                    <span class="o_icterp_home_name" t-esc="app.name"/>
+                                </a>
+                            </t>
+                        </div>
+                    </section>
+                </t>
+                <p t-if="!sections.length" class="o_icterp_home_empty">No app matches "<t t-esc="state.query"/>".</p>
+            </div>
+        </div>
+    </t>
+</templates>

@@ -1,0 +1,22 @@
+{
+    "name": "ICTERP Education: Online Admissions, Entry Test and Merit List",
+    "summary": "Online application form, entry test roll numbers and admit cards, weighted merit lists, offer letters and admission fee challans",
+    "description": "Admissions for colleges and universities on ICTERP Education. See README.md.",
+    "version": "19.0.1.0.0",
+    "category": "Education",
+    "author": "ICT Innovations",
+    "website": "https://icterp.com",
+    "license": "LGPL-3",
+    "depends": ["openeducat_admission", "icterp_edu_fee_challan", "website"],
+    "data": [
+        "security/ir.model.access.csv",
+        "data/admission_data.xml",
+        "report/admission_reports.xml",
+        "data/mail_templates.xml",
+        "views/entry_test_views.xml",
+        "views/admission_views.xml",
+        "views/website_templates.xml",
+        "views/menus.xml",
+    ],
+    "installable": True,
+}

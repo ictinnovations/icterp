@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_op_subject_form_credits" model="ir.ui.view">
+        <field name="name">op.subject.form.icterp</field>
+        <field name="model">op.subject</field>
+        <field name="inherit_id" ref="openeducat_core.view_op_subject_form"/>
+        <field name="arch" type="xml">
+            <field name="grade_weightage" position="after">
+                <field name="credit_hours"/>
+            </field>
+            <xpath expr="//sheet/group" position="after">
+                <group string="Prerequisites" name="prerequisites">
+                    <field name="prerequisite_ids" widget="many2many_tags" nolabel="1" colspan="2"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+</odoo>

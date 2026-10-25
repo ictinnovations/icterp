@@ -1,0 +1,4 @@
+// Settings "?" help icons point to odoo.com/documentation; hide them.
+a.o_doc_link[href*="odoo.com"] {
+    display: none !important;
+}

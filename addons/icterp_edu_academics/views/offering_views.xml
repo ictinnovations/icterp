@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="offering_view_list" model="ir.ui.view">
+        <field name="name">icterp.course.offering.list</field>
+        <field name="model">icterp.course.offering</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="term_id"/>
+                <field name="subject_id"/>
+                <field name="course_id"/>
+                <field name="batch_id"/>
+                <field name="section"/>
+                <field name="faculty_id"/>
+                <field name="credit_hours"/>
+                <field name="enrolled_count" string="Students"/>
+                <field name="capacity"/>
+                <field name="state" widget="badge" decoration-info="state == 'open'" decoration-warning="state == 'verified'" decoration-success="state == 'published'"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="offering_view_form" model="ir.ui.view">
+        <field name="name">icterp.course.offering.form</field>
+        <field name="model">icterp.course.offering</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_open" type="object" string="Open for registration" class="btn-primary" invisible="state != 'draft'" groups="openeducat_core.group_op_back_office_admin"/>
+                    <button name="action_bulk_enroll" type="object" string="Enrol students" class="btn-primary" invisible="state != 'open'" groups="openeducat_core.group_op_back_office_admin"/>
+                    <button name="action_verify" type="object" string="Verify results" invisible="state != 'open'"/>
+                    <button name="action_publish" type="object" string="Publish results" class="btn-primary" invisible="state != 'verified'" groups="openeducat_core.group_op_back_office_admin"
+                            confirm="Publish grades? Students and parents will see them and the GPA will be recalculated."/>
+                    <button name="action_revert" type="object" string="Unpublish" invisible="state != 'published'" groups="openeducat_core.group_op_back_office_admin"
+                            confirm="Unpublish these results? Grades disappear from the portal and GPAs are recalculated."/>
+                    <button name="action_reset_draft" type="object" string="Back to draft" invisible="state not in ('open', 'verified')" groups="openeducat_core.group_op_back_office_admin"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="%(icterp_edu_academics.mark_action)d" type="action" class="oe_stat_button" icon="fa-pencil-square-o"
+                                context="{'search_default_offering_id': id, 'default_offering_id': id}">
+                            <span>Enter marks</span>
+                        </button>
+                    </div>
+                    <div class="oe_title"><h1><field name="name" readonly="1"/></h1></div>
+                    <group>
+                        <group>
+                            <field name="term_id" readonly="state != 'draft'"/>
+                            <field name="course_id" readonly="state != 'draft'"/>
+                            <field name="batch_id" readonly="state != 'draft'"/>
+                            <field name="subject_id" readonly="state != 'draft'"/>
+                            <field name="section" readonly="state != 'draft'"/>
+                        </group>
+                        <group>
+                            <field name="faculty_id"/>
+                            <field name="credit_hours" readonly="state in ('verified', 'published')"/>
+                            <field name="capacity"/>
+                            <field name="classroom_id"/>
+                            <field name="grade_scale_id" readonly="state in ('verified', 'published')"/>
+                            <field name="enrolled_count"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Assessments" name="assessments">
+                            <field name="component_ids" readonly="state in ('verified', 'published')">
+                                <list editable="bottom">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="name"/>
+                                    <field name="type"/>
+                                    <field name="max_marks"/>
+                                    <field name="weight" sum="Total"/>
+                                    <field name="source"/>
+                                    <field name="external_ref" optional="hide"/>
+                                </list>
+                            </field>
+                            <div class="text-muted">Weights must total 100% before the results can be verified. Marks from ICTExam arrive through its import; set Source to ICTExam for those assessments.</div>
+                        </page>
+                        <page string="Students" name="students">
+                            <field name="enrollment_ids" readonly="1">
+                                <list>
+                                    <field name="student_id"/>
+                                    <field name="state" widget="badge"/>
+                                    <field name="percentage"/>
+                                    <field name="grade_letter"/>
+                                    <field name="grade_points"/>
+                                    <field name="is_repeat" optional="show"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="offering_view_search" model="ir.ui.view">
+        <field name="name">icterp.course.offering.search</field>
+        <field name="model">icterp.course.offering</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="subject_id"/>
+                <field name="term_id"/>
+                <field name="faculty_id"/>
+                <field name="course_id"/>
+                <filter name="mine" string="My courses" domain="[('faculty_user_id', '=', uid)]"/>
+                <filter name="open" string="Open" domain="[('state', '=', 'open')]"/>
+                <filter name="published" string="Published" domain="[('state', '=', 'published')]"/>
+                <group>
+                    <filter name="by_term" string="Term" context="{'group_by': 'term_id'}"/>
+                    <filter name="by_course" string="Course" context="{'group_by': 'course_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="offering_action" model="ir.actions.act_window">
+        <field name="name">Course offerings</field>
+        <field name="res_model">icterp.course.offering</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{'search_default_by_term': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Offer your first course for a term</p>
+            <p>An offering is one subject taught to one batch and section in a term. Open it, enrol students, set up the assessments, enter marks, then verify and publish the results.</p>
+        </field>
+    </record>
+
+    <record id="component_view_form" model="ir.ui.view">
+        <field name="name">icterp.assessment.component.form</field>
+        <field name="model">icterp.assessment.component</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="offering_id"/>
+                            <field name="name"/>
+                            <field name="type"/>
+                        </group>
+                        <group>
+                            <field name="max_marks"/>
+                            <field name="weight"/>
+                            <field name="source"/>
+                            <field name="external_ref"/>
+                        </group>
+                    </group>
+                    <field name="question_ids">
+                        <list editable="bottom">
+                            <field name="sequence" widget="handle"/>
+                            <field name="name"/>
+                            <field name="max_marks" sum="Total"/>
+                            <field name="external_ref" optional="hide"/>
+                        </list>
+                    </field>
+                    <div class="text-muted">Questions are optional. When set, their marks must add up to the assessment total, and in OBE each question can be mapped to a CLO.</div>
+                </sheet>
+            </form>
+        </field>
+    </record>
+</odoo>

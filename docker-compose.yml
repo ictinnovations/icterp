@@ -1,0 +1,31 @@
+# ICTERP Community for local use and testing: Odoo Community 19 + PostgreSQL 16.
+# Odoo listens on 127.0.0.1 only. Put the database password in .env (see .env.example).
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: odoo
+      POSTGRES_PASSWORD: ${PG_PASSWORD}
+      POSTGRES_DB: postgres
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    restart: unless-stopped
+  odoo:
+    image: odoo:19.0
+    depends_on:
+      - db
+    ports:
+      - "127.0.0.1:8069:8069"
+    environment:
+      HOST: db
+      USER: odoo
+      PASSWORD: ${PG_PASSWORD}
+    volumes:
+      - ./addons:/mnt/extra-addons/icterp
+      - ./addons-vendor:/mnt/extra-addons/vendor
+      - ./config:/etc/odoo
+      - odoodata:/var/lib/odoo
+    restart: unless-stopped
+volumes:
+  pgdata:
+  odoodata:

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="icterp_home_section_view_list" model="ir.ui.view">
+        <field name="name">icterp.home.section.list</field>
+        <field name="model">icterp.home.section</field>
+        <field name="arch" type="xml">
+            <list string="Home page sections" editable="bottom">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="hint"/>
+                <field name="menu_ids" widget="many2many_tags" options="{'no_create': True}"/>
+                <field name="module_prefixes" optional="hide"/>
+                <field name="active" widget="boolean_toggle"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="icterp_home_section_view_form" model="ir.ui.view">
+        <field name="name">icterp.home.section.form</field>
+        <field name="model">icterp.home.section</field>
+        <field name="arch" type="xml">
+            <form string="Home page section">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="hint"/>
+                        <field name="menu_ids" widget="many2many_tags" options="{'no_create': True}"/>
+                        <field name="module_prefixes"/>
+                        <field name="sequence"/>
+                        <field name="active"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="res_config_settings_view_form_icterp_home" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.icterp.home</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="base_setup.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//block[@name='users_setting_container']" position="before">
+                <block title="Home page" name="icterp_home_setting_container">
+                    <setting id="icterp_home_enabled" string="Open Home after sign-in"
+                             help="Internal users start on the Home page with app tiles. Users who picked their own home action keep it.">
+                        <field name="icterp_home_enabled"/>
+                    </setting>
+                    <setting id="icterp_home_show_more" string="Show apps not in a section"
+                             help="Apps you have not placed in a section appear under More apps.">
+                        <field name="icterp_home_show_more"/>
+                    </setting>
+                    <setting id="icterp_home_welcome" string="Welcome message"
+                             help="Shown under the greeting. Leave empty for the standard text.">
+                        <field name="icterp_home_welcome" placeholder="Pick an app to get started."/>
+                    </setting>
+                    <setting id="icterp_home_sections" string="Sections"
+                             help="Rename, reorder or hide sections, and choose which apps each one shows.">
+                        <button name="action_icterp_home_sections" type="object" string="Configure sections"
+                                icon="oi-arrow-right" class="btn-link"/>
+                    </setting>
+                </block>
+            </xpath>
+        </field>
+    </record>
+</odoo>

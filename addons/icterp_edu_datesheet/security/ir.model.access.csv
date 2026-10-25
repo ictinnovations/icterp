@@ -1,0 +1,9 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_schedule_faculty,schedule faculty,model_icterp_exam_schedule,openeducat_core.group_op_faculty,1,0,0,0
+access_schedule_manager,schedule manager,model_icterp_exam_schedule,openeducat_core.group_op_back_office_admin,1,1,1,1
+access_paper_faculty,paper faculty,model_icterp_exam_paper,openeducat_core.group_op_faculty,1,0,0,0
+access_paper_manager,paper manager,model_icterp_exam_paper,openeducat_core.group_op_back_office_admin,1,1,1,1
+access_seat_faculty,seat faculty,model_icterp_exam_seat,openeducat_core.group_op_faculty,1,0,0,0
+access_seat_manager,seat manager,model_icterp_exam_seat,openeducat_core.group_op_back_office_admin,1,1,1,1
+access_duty_faculty,duty faculty,model_icterp_exam_duty,openeducat_core.group_op_faculty,1,0,0,0
+access_duty_manager,duty manager,model_icterp_exam_duty,openeducat_core.group_op_back_office_admin,1,1,1,1

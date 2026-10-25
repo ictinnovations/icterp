@@ -1,0 +1,21 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_grade_scale_faculty,grade scale faculty,model_icterp_grade_scale,openeducat_core.group_op_faculty,1,0,0,0
+access_grade_scale_manager,grade scale manager,model_icterp_grade_scale,openeducat_core.group_op_back_office_admin,1,1,1,1
+access_grade_scale_line_faculty,grade band faculty,model_icterp_grade_scale_line,openeducat_core.group_op_faculty,1,0,0,0
+access_grade_scale_line_manager,grade band manager,model_icterp_grade_scale_line,openeducat_core.group_op_back_office_admin,1,1,1,1
+access_offering_faculty,offering faculty,model_icterp_course_offering,openeducat_core.group_op_faculty,1,0,0,0
+access_offering_manager,offering manager,model_icterp_course_offering,openeducat_core.group_op_back_office_admin,1,1,1,1
+access_component_faculty,component faculty,model_icterp_assessment_component,openeducat_core.group_op_faculty,1,1,1,1
+access_component_manager,component manager,model_icterp_assessment_component,openeducat_core.group_op_back_office_admin,1,1,1,1
+access_question_faculty,question faculty,model_icterp_assessment_question,openeducat_core.group_op_faculty,1,1,1,1
+access_question_manager,question manager,model_icterp_assessment_question,openeducat_core.group_op_back_office_admin,1,1,1,1
+access_mark_faculty,mark faculty,model_icterp_assessment_mark,openeducat_core.group_op_faculty,1,1,1,1
+access_mark_manager,mark manager,model_icterp_assessment_mark,openeducat_core.group_op_back_office_admin,1,1,1,1
+access_qmark_faculty,question mark faculty,model_icterp_assessment_question_mark,openeducat_core.group_op_faculty,1,1,1,1
+access_qmark_manager,question mark manager,model_icterp_assessment_question_mark,openeducat_core.group_op_back_office_admin,1,1,1,1
+access_enrollment_faculty,enrollment faculty,model_icterp_enrollment,openeducat_core.group_op_faculty,1,0,0,0
+access_enrollment_manager,enrollment manager,model_icterp_enrollment,openeducat_core.group_op_back_office_admin,1,1,1,1
+access_term_result_faculty,term result faculty,model_icterp_term_result,openeducat_core.group_op_faculty,1,0,0,0
+access_term_result_manager,term result manager,model_icterp_term_result,openeducat_core.group_op_back_office_admin,1,1,1,1
+access_bulk_enroll_manager,bulk enroll manager,model_icterp_bulk_enroll,openeducat_core.group_op_back_office_admin,1,1,1,1
+access_grade_change_manager,grade change manager,model_icterp_grade_change,openeducat_core.group_op_back_office_admin,1,1,1,1

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem id="menu_academics_root" name="Academics" parent="openeducat_core.menu_op_school_root" sequence="40"/>
+    <menuitem id="menu_offerings" name="Course offerings" parent="menu_academics_root" action="offering_action" sequence="10"/>
+    <menuitem id="menu_marks" name="Marks" parent="menu_academics_root" action="mark_action" sequence="20"/>
+    <menuitem id="menu_enrollments" name="Course registrations" parent="menu_academics_root" action="enrollment_action" sequence="30"/>
+    <menuitem id="menu_term_results" name="GPA and standing" parent="menu_academics_root" action="term_result_action" sequence="40"/>
+    <menuitem id="menu_grade_scales" name="Grade scales" parent="menu_academics_root" action="grade_scale_action" sequence="90"
+              groups="openeducat_core.group_op_back_office_admin"/>
+</odoo>

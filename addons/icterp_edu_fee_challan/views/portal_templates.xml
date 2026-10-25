@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="portal_education_challans" inherit_id="icterp_edu_portal.portal_my_education_student">
+        <xpath expr="//div[@id='icterp_edu_extra_sections']" position="before">
+            <section id="challans" class="mb-5" t-if="edu_challans">
+                <h4>Fee challans</h4>
+                <t t-call="portal.portal_table">
+                    <thead><tr><th>Challan</th><th>Due date</th><th class="text-end">Amount</th><th>Status</th><th/></tr></thead>
+                    <tbody>
+                        <tr t-foreach="edu_challans" t-as="c">
+                            <td t-out="c.name"/>
+                            <td t-out="c.due_date" t-options="{'widget': 'date'}"/>
+                            <td class="text-end" t-out="c.amount" t-options="{'widget': 'monetary', 'display_currency': c.currency_id}"/>
+                            <td>
+                                <span t-if="c.state == 'paid'" class="badge text-bg-success">Paid</span>
+                                <span t-elif="c.due_date and c.due_date &lt; today" class="badge text-bg-danger">Overdue, fine applies</span>
+                                <span t-else="" class="badge text-bg-warning">To pay</span>
+                            </td>
+                            <td class="text-end">
+                                <a t-attf-href="/my/education/challan/#{c.id}" class="btn btn-sm btn-outline-primary"><i class="fa fa-download"/> Challan (PDF)</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </t>
+            </section>
+        </xpath>
+    </template>
+</odoo>

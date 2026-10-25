@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Card on /my -->
+    <template id="portal_my_home_education" name="Education" inherit_id="portal.portal_my_home" customize_show="True" priority="25">
+        <xpath expr="//div[hasclass('o_portal_docs')]" position="before">
+            <t t-set="portal_client_category_enable" t-value="True"/>
+        </xpath>
+        <div id="portal_client_category" position="inside">
+            <t t-call="portal.portal_docs_entry">
+                <t t-set="icon" t-value="'/icterp_education/static/img/education.png'"/>
+                <t t-set="title">Education</t>
+                <t t-set="url" t-value="'/my/education'"/>
+                <t t-set="text">Timetable, attendance, results, assignments and fees</t>
+                <t t-set="placeholder_count" t-value="'edu_count'"/>
+            </t>
+        </div>
+    </template>
+
+    <template id="portal_breadcrumbs_education" inherit_id="portal.portal_breadcrumbs">
+        <xpath expr="//ol[hasclass('o_portal_submenu')]" position="inside">
+            <li t-if="page_name == 'education'" class="breadcrumb-item">Education</li>
+            <li t-if="page_name == 'education_student'" class="breadcrumb-item">
+                <a t-if="multi" href="/my/education">Education</a>
+                <t t-else="">Education</t>
+            </li>
+            <li t-if="page_name == 'education_student'" class="breadcrumb-item" t-out="student.name"/>
+        </xpath>
+    </template>
+
+    <!-- Parent with several children: pick one -->
+    <template id="portal_my_education" name="Education">
+        <t t-call="portal.portal_layout">
+            <t t-set="breadcrumbs_searchbar" t-value="True"/>
+            <t t-call="portal.portal_searchbar"><t t-set="title">Education</t></t>
+            <p t-if="not students" class="alert alert-info mt-3">
+                No student is linked to your account yet. Ask the school office to link your login to your child's record.
+            </p>
+            <div class="row g-3 mt-1">
+                <div t-foreach="students" t-as="s" class="col-md-6 col-lg-4">
+                    <a t-attf-href="/my/education/#{s.id}" class="card h-100 text-decoration-none o_icterp_edu_card">
+                        <div class="card-body d-flex gap-3 align-items-center">
+                            <img t-if="s.image_1920" t-att-src="image_data_uri(s.image_1920)" class="rounded-circle" width="56" height="56" alt=""/>
+                            <div>
+                                <h5 class="mb-1" t-out="s.name"/>
+                                <div class="text-muted small" t-out="', '.join(s.course_detail_ids.mapped('course_id.name'))"/>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <!-- One student -->
+    <template id="portal_my_education_student" name="Student">
+        <t t-call="portal.portal_layout">
+            <t t-set="breadcrumbs_searchbar" t-value="True"/>
+            <t t-call="portal.portal_searchbar"><t t-set="title" t-value="student.name"/></t>
+
+            <div t-if="message == 'submitted'" class="alert alert-success mt-3">Your assignment was handed in.</div>
+            <div t-if="error == 'empty'" class="alert alert-warning mt-3">Write your answer before you hand it in.</div>
+            <div t-if="error == 'locked'" class="alert alert-warning mt-3">That assignment was already handed in and is with your teacher.</div>
+
+            <div class="o_icterp_edu mt-3">
+                <!-- summary tiles -->
+                <div class="row g-3 mb-4">
+                    <div class="col-6 col-lg-3"><div class="o_icterp_edu_tile">
+                        <div class="o_label">Attendance</div>
+                        <div class="o_value"><t t-if="attendance['percent'] is not None"><t t-out="attendance['percent']"/>%</t><t t-else="">-</t></div>
+                        <div class="o_sub"><t t-out="attendance['absent']"/> absent, <t t-out="attendance['late']"/> late</div>
+                    </div></div>
+                    <div class="col-6 col-lg-3"><div class="o_icterp_edu_tile">
+                        <div class="o_label">Latest result</div>
+                        <div class="o_value"><t t-if="results"><t t-out="'%.0f' % results[0].percentage"/>%</t><t t-else="">-</t></div>
+                        <div class="o_sub"><t t-if="results" t-out="results[0].marksheet_reg_id.exam_session_id.name"/></div>
+                    </div></div>
+                    <div class="col-6 col-lg-3"><div class="o_icterp_edu_tile">
+                        <div class="o_label">Assignments due</div>
+                        <div class="o_value" t-out="len([a for a in assignments if a['assignment'].state == 'publish' and not (a['submission'] and a['submission'].state in ('submit', 'accept'))])"/>
+                        <div class="o_sub">not handed in yet</div>
+                    </div></div>
+                    <div class="col-6 col-lg-3"><div class="o_icterp_edu_tile">
+                        <t t-set="owed" t-value="sum(f['due'] for f in fees if f['invoice'] and not f['paid'])"/>
+                        <div class="o_label">Fees due</div>
+                        <div class="o_value" t-out="owed" t-options="{'widget': 'monetary', 'display_currency': student.env.company.currency_id}"/>
+                        <div class="o_sub">on issued invoices</div>
+                    </div></div>
+                </div>
+
+                <!-- timetable -->
+                <section id="timetable" class="mb-5">
+                    <div class="d-flex align-items-center justify-content-between mb-2">
+                        <h4 class="mb-0">Timetable</h4>
+                        <div class="btn-group btn-group-sm">
+                            <a class="btn btn-outline-secondary" t-attf-href="?week=#{timetable['offset'] - 1}#timetable">&#8592; Previous</a>
+                            <a class="btn btn-outline-secondary" href="?week=0#timetable">This week</a>
+                            <a class="btn btn-outline-secondary" t-attf-href="?week=#{timetable['offset'] + 1}#timetable">Next &#8594;</a>
+                        </div>
+                    </div>
+                    <div class="text-muted small mb-2">
+                        <t t-out="timetable['monday']" t-options="{'widget': 'date'}"/> to <t t-out="timetable['sunday']" t-options="{'widget': 'date'}"/>
+                    </div>
+                    <p t-if="not any(d['sessions'] for d in timetable['days'])" class="text-muted d-md-none">No classes this week.</p>
+                    <div class="row g-2">
+                        <div t-foreach="timetable['days']" t-as="day" t-attf-class="col-md #{'d-none d-md-block' if not day['sessions'] else ''}">
+                            <div class="o_icterp_edu_day">
+                                <div class="fw-bold mb-1" t-out="day['date'].strftime('%A')"/>
+                                <div t-if="not day['sessions']" class="text-muted small">No classes</div>
+                                <div t-foreach="day['sessions']" t-as="s" class="o_icterp_edu_session">
+                                    <div class="small text-muted" t-out="s.timing"/>
+                                    <div class="fw-semibold" t-out="s.subject_id.name"/>
+                                    <div class="small"><t t-out="s.faculty_id.name"/><t t-if="s.classroom_id">, <t t-out="s.classroom_id.name"/></t></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- attendance -->
+                <section id="attendance" class="mb-5">
+                    <h4>Attendance</h4>
+                    <p t-if="not attendance['total']" class="text-muted">No attendance has been recorded yet.</p>
+                    <t t-if="attendance['total']">
+                        <p>
+                            Present <strong t-out="attendance['present']"/> of <t t-out="attendance['total']"/> classes.
+                            Absent <t t-out="attendance['absent']"/>, late <t t-out="attendance['late']"/>, excused <t t-out="attendance['excused']"/>.
+                        </p>
+                        <t t-call="portal.portal_table">
+                            <thead><tr><th>Date</th><th>Class</th><th>Status</th><th>Remark</th></tr></thead>
+                            <tbody>
+                                <tr t-foreach="attendance['recent']" t-as="line">
+                                    <td t-out="line.attendance_date" t-options="{'widget': 'date'}"/>
+                                    <td t-out="line.attendance_id.session_id.subject_id.name or line.register_id.name"/>
+                                    <td>
+                                        <span t-if="line.present and not line.late" class="badge text-bg-success">Present</span>
+                                        <span t-elif="line.late" class="badge text-bg-warning">Late</span>
+                                        <span t-elif="line.excused" class="badge text-bg-info">Excused</span>
+                                        <span t-else="" class="badge text-bg-danger">Absent</span>
+                                    </td>
+                                    <td t-out="line.remark"/>
+                                </tr>
+                            </tbody>
+                        </t>
+                    </t>
+                </section>
+
+                <!-- results -->
+                <section id="results" class="mb-5">
+                    <h4>Results</h4>
+                    <p t-if="not results" class="text-muted">No results have been published yet.</p>
+                    <div t-foreach="results" t-as="ms" class="card mb-3">
+                        <div class="card-header d-flex justify-content-between flex-wrap gap-2">
+                            <strong t-out="ms.marksheet_reg_id.exam_session_id.name or ms.marksheet_reg_id.name"/>
+                            <span>
+                                Total <t t-out="ms.total_marks"/>, <t t-out="'%.1f' % ms.percentage"/>%
+                                <t t-if="ms.grade">, grade <strong t-out="ms.grade"/></t>
+                                <span t-if="ms.status == 'pass'" class="badge text-bg-success ms-2">Pass</span>
+                                <span t-elif="ms.status == 'fail'" class="badge text-bg-danger ms-2">Fail</span>
+                            </span>
+                        </div>
+                        <t t-call="portal.portal_table">
+                            <thead><tr><th>Subject</th><th>Exam</th><th class="text-end">Marks</th><th class="text-end">Out of</th><th>Grade</th></tr></thead>
+                            <tbody>
+                                <tr t-foreach="ms.result_line" t-as="r">
+                                    <td t-out="r.exam_id.subject_id.name"/>
+                                    <td t-out="r.exam_id.name"/>
+                                    <td class="text-end" t-out="r.marks"/>
+                                    <td class="text-end" t-out="r.exam_id.total_marks"/>
+                                    <td t-out="r.grade"/>
+                                </tr>
+                            </tbody>
+                        </t>
+                    </div>
+                </section>
+
+                <!-- assignments -->
+                <section id="assignments" class="mb-5">
+                    <h4>Assignments</h4>
+                    <p t-if="not assignments" class="text-muted">No assignments right now.</p>
+                    <div t-foreach="assignments" t-as="row" class="card mb-3">
+                        <t t-set="a" t-value="row['assignment']"/>
+                        <t t-set="sub" t-value="row['submission']"/>
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between flex-wrap gap-2">
+                                <h5 class="mb-1" t-out="a.name"/>
+                                <span>
+                                    <span t-if="not sub or sub.state == 'draft'" class="badge text-bg-secondary">Not handed in</span>
+                                    <span t-elif="sub.state == 'submit'" class="badge text-bg-primary">Handed in</span>
+                                    <span t-elif="sub.state == 'accept'" class="badge text-bg-success">Accepted</span>
+                                    <span t-elif="sub.state == 'change'" class="badge text-bg-warning">Changes requested</span>
+                                    <span t-elif="sub.state == 'reject'" class="badge text-bg-danger">Rejected</span>
+                                </span>
+                            </div>
+                            <div class="text-muted small mb-2">
+                                <t t-out="a.subject_id.name"/> &#183; due <t t-out="a.submission_date" t-options="{'widget': 'datetime'}"/>
+                                <t t-if="a.marks"> &#183; <t t-out="a.marks"/> marks</t>
+                                <t t-if="sub and sub.marks"> &#183; scored <strong t-out="sub.marks"/></t>
+                            </div>
+                            <p class="mb-2" t-out="a.description"/>
+                            <p t-if="sub and sub.note" class="mb-2"><em>Teacher's note:</em> <t t-out="sub.note"/></p>
+                            <form t-if="is_self and a.state == 'publish' and (not sub or sub.state in ('draft', 'change'))"
+                                  method="post" t-attf-action="/my/education/#{student.id}/assignment/#{a.id}/submit">
+                                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                <textarea name="answer" class="form-control mb-2" rows="4" placeholder="Write your answer" t-out="sub.description if sub else ''"/>
+                                <button type="submit" class="btn btn-primary btn-sm">Hand in</button>
+                            </form>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- fees -->
+                <section id="fees" class="mb-5">
+                    <h4>Fees</h4>
+                    <p t-if="not fees" class="text-muted">No fees are scheduled.</p>
+                    <t t-if="fees" t-call="portal.portal_table">
+                        <thead><tr><th>Fee</th><th>Date</th><th class="text-end">Amount</th><th>Status</th><th/></tr></thead>
+                        <tbody>
+                            <tr t-foreach="fees" t-as="f">
+                                <td t-out="f['fee'].product_id.name or f['fee'].course_id.name"/>
+                                <td t-out="f['fee'].date" t-options="{'widget': 'date'}"/>
+                                <td class="text-end" t-out="f['fee'].after_discount_amount or f['fee'].amount" t-options="{'widget': 'monetary', 'display_currency': f['fee'].currency_id}"/>
+                                <td>
+                                    <span t-if="f['paid']" class="badge text-bg-success">Paid</span>
+                                    <span t-elif="f['invoice']" class="badge text-bg-warning">Due</span>
+                                    <span t-else="" class="badge text-bg-secondary">Not invoiced yet</span>
+                                </td>
+                                <td class="text-end">
+                                    <a t-if="f['url'] and not f['paid']" t-att-href="f['url']" class="btn btn-sm btn-primary">View and pay</a>
+                                    <a t-elif="f['url']" t-att-href="f['url']" class="btn btn-sm btn-outline-secondary">View</a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </t>
+                </section>
+
+                <!-- other education modules add their sections here -->
+                <div id="icterp_edu_extra_sections"/>
+
+                <!-- library -->
+                <section id="library" class="mb-5">
+                    <h4>Library</h4>
+                    <p t-if="not library" class="text-muted">Nothing borrowed at the moment.</p>
+                    <t t-if="library" t-call="portal.portal_table">
+                        <thead><tr><th>Book</th><th>Issued</th><th>Due back</th><th>Status</th></tr></thead>
+                        <tbody>
+                            <tr t-foreach="library" t-as="m">
+                                <td t-out="m.media_id.name"/>
+                                <td t-out="m.issued_date" t-options="{'widget': 'date'}"/>
+                                <td t-out="m.return_date" t-options="{'widget': 'date'}"/>
+                                <td>
+                                    <span t-if="m.state == 'issue' and m.return_date and m.return_date &lt; today" class="badge text-bg-danger">Overdue</span>
+                                    <span t-elif="m.state == 'issue'" class="badge text-bg-primary">Borrowed</span>
+                                    <span t-elif="m.state == 'reserve'" class="badge text-bg-info">Reserved</span>
+                                    <span t-else="" class="badge text-bg-danger">Lost</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </t>
+                </section>
+            </div>
+        </t>
+    </template>
+</odoo>

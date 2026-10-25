@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="bulk_enroll_view_form" model="ir.ui.view">
+        <field name="name">icterp.bulk.enroll.form</field>
+        <field name="model">icterp.bulk.enroll</field>
+        <field name="arch" type="xml">
+            <form>
+                <group>
+                    <field name="offering_id" readonly="1"/>
+                </group>
+                <div class="text-muted mb-2" invisible="result_note">Students of this course and batch who are not enrolled yet are listed. Remove anyone who should not be enrolled.</div>
+                <field name="student_ids" invisible="result_note"/>
+                <field name="result_note" invisible="not result_note" nolabel="1"/>
+                <footer>
+                    <button name="action_enroll" type="object" string="Enrol" class="btn-primary" invisible="result_note"/>
+                    <button string="Close" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- openeducat_core renames the system bot to "OpenEducat Bot"; put the ICTERP Assistant back -->
+    <function model="res.partner" name="_icterp_brand_bot"/>
+    <!-- "OpenEduCat" security categories and privileges -> "Education" -->
+    <function model="ir.module.category" name="_icterp_debrand_education"/>
+
+    <!-- Daily report to srv.openeducat.org: off (see models/publisher_warranty.py) -->
+    <record id="openeducat_core.ir_cron_module_update_notification_openeducat" model="ir.cron">
+        <field name="active" eval="False"/>
+    </record>
+</odoo>

@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="page_admission_index" name="Admissions">
+        <t t-call="website.layout">
+            <div class="container py-5">
+                <h1>Admissions</h1>
+                <p class="lead">Apply online, then check your entry test details, merit position and offer here.</p>
+                <p><a href="/admission/status" class="btn btn-outline-primary">Check my application</a></p>
+                <div t-if="not registers" class="alert alert-info mt-4">Admissions are not open at the moment.</div>
+                <div class="row g-3 mt-2">
+                    <div t-foreach="registers" t-as="r" class="col-md-6">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h4 class="card-title" t-out="r.name"/>
+                                <p class="text-muted mb-2">
+                                    <t t-out="r.program_id.name or r.course_id.name"/><br/>
+                                    Apply by <strong t-out="r.end_date" t-options="{'widget': 'date'}"/>
+                                    <t t-if="r.max_count"> &#183; <t t-out="r.max_count"/> seats</t>
+                                </p>
+                                <a t-attf-href="/admission/apply/#{r.id}" class="btn btn-primary">Apply now</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <template id="page_admission_closed" name="Admissions closed">
+        <t t-call="website.layout">
+            <div class="container py-5">
+                <h1>This intake is not taking applications</h1>
+                <p><a href="/admission">See open admissions</a></p>
+            </div>
+        </t>
+    </template>
+
+    <template id="admission_field" name="Admission form field">
+        <div t-attf-class="mb-3 #{cls or 'col-md-6'}">
+            <label class="form-label" t-att-for="name"><t t-out="label"/><t t-if="required"> *</t></label>
+            <input t-att-type="type or 'text'" t-att-name="name" t-att-id="name" t-attf-class="form-control #{'is-invalid' if errors.get(name) else ''}"
+                   t-att-value="post.get(name, default or '')" t-att-required="required and 'required' or None" t-att-step="step" t-att-min="min"/>
+            <div class="invalid-feedback" t-if="errors.get(name)" t-out="errors.get(name)"/>
+        </div>
+    </template>
+
+    <template id="page_admission_form" name="Admission form">
+        <t t-call="website.layout">
+            <div class="container py-5" style="max-width: 900px;">
+                <h1>Apply: <t t-out="register.name"/></h1>
+                <p class="text-muted">Fields marked * are required. You will get an application number to check your status.</p>
+                <div t-if="errors" class="alert alert-danger">Please fix the highlighted fields.</div>
+                <form method="post" t-attf-action="/admission/apply/#{register.id}">
+                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                    <div style="position: absolute; left: -5000px;" aria-hidden="true">
+                        <input type="text" name="website_url" tabindex="-1" autocomplete="off"/>
+                    </div>
+                    <h5 class="mt-3">About you</h5>
+                    <div class="row">
+                        <t t-call="icterp_edu_admission.admission_field"><t t-set="name" t-value="'first_name'"/><t t-set="label">First name</t><t t-set="required" t-value="True"/></t>
+                        <t t-call="icterp_edu_admission.admission_field"><t t-set="name" t-value="'last_name'"/><t t-set="label">Last name</t><t t-set="required" t-value="True"/></t>
+                        <t t-call="icterp_edu_admission.admission_field"><t t-set="name" t-value="'email'"/><t t-set="type" t-value="'email'"/><t t-set="label">Email</t><t t-set="required" t-value="True"/></t>
+                        <t t-call="icterp_edu_admission.admission_field"><t t-set="name" t-value="'mobile'"/><t t-set="type" t-value="'tel'"/><t t-set="label">Mobile number</t><t t-set="required" t-value="True"/></t>
+                        <t t-call="icterp_edu_admission.admission_field"><t t-set="name" t-value="'birth_date'"/><t t-set="type" t-value="'date'"/><t t-set="label">Date of birth</t><t t-set="required" t-value="True"/></t>
+                        <div class="mb-3 col-md-6">
+                            <label class="form-label" for="gender">Gender *</label>
+                            <select name="gender" id="gender" t-attf-class="form-select #{'is-invalid' if errors.get('gender') else ''}" required="required">
+                                <option value="">Choose</option>
+                                <option value="m" t-att-selected="post.get('gender') == 'm' or None">Male</option>
+                                <option value="f" t-att-selected="post.get('gender') == 'f' or None">Female</option>
+                            </select>
+                        </div>
+                        <t t-call="icterp_edu_admission.admission_field"><t t-set="name" t-value="'street'"/><t t-set="label">Address</t></t>
+                        <t t-call="icterp_edu_admission.admission_field"><t t-set="name" t-value="'city'"/><t t-set="label">City</t></t>
+                    </div>
+                    <h5 class="mt-3">Programme</h5>
+                    <div class="row">
+                        <div class="mb-3 col-md-6" t-if="len(courses) &gt; 1">
+                            <label class="form-label" for="course_id">Programme *</label>
+                            <select name="course_id" id="course_id" t-attf-class="form-select #{'is-invalid' if errors.get('course_id') else ''}" required="required">
+                                <option value="">Choose</option>
+                                <option t-foreach="courses" t-as="c" t-att-value="c.id" t-att-selected="post.get('course_id') == str(c.id) or None" t-out="c.name"/>
+                            </select>
+                        </div>
+                        <div class="mb-3 col-md-6" t-else=""><label class="form-label">Programme</label><div class="form-control-plaintext" t-out="courses[:1].name"/></div>
+                    </div>
+                    <h5 class="mt-3">Previous results</h5>
+                    <div class="row">
+                        <t t-call="icterp_edu_admission.admission_field"><t t-set="name" t-value="'matric_obtained'"/><t t-set="type" t-value="'number'"/><t t-set="step" t-value="'any'"/><t t-set="min" t-value="0"/><t t-set="cls" t-value="'col-md-3'"/><t t-set="label">Matric marks</t></t>
+                        <t t-call="icterp_edu_admission.admission_field"><t t-set="name" t-value="'matric_total'"/><t t-set="type" t-value="'number'"/><t t-set="step" t-value="'any'"/><t t-set="default" t-value="'1100'"/><t t-set="cls" t-value="'col-md-3'"/><t t-set="label">out of</t></t>
+                        <t t-call="icterp_edu_admission.admission_field"><t t-set="name" t-value="'inter_obtained'"/><t t-set="type" t-value="'number'"/><t t-set="step" t-value="'any'"/><t t-set="min" t-value="0"/><t t-set="cls" t-value="'col-md-3'"/><t t-set="label">Intermediate marks</t></t>
+                        <t t-call="icterp_edu_admission.admission_field"><t t-set="name" t-value="'inter_total'"/><t t-set="type" t-value="'number'"/><t t-set="step" t-value="'any'"/><t t-set="default" t-value="'1100'"/><t t-set="cls" t-value="'col-md-3'"/><t t-set="label">out of</t></t>
+                        <t t-call="icterp_edu_admission.admission_field"><t t-set="name" t-value="'board_name'"/><t t-set="label">Board or university</t></t>
+                        <t t-call="icterp_edu_admission.admission_field"><t t-set="name" t-value="'passing_year'"/><t t-set="cls" t-value="'col-md-3'"/><t t-set="label">Passing year</t></t>
+                        <t t-call="icterp_edu_admission.admission_field"><t t-set="name" t-value="'prev_institute'"/><t t-set="label">Last college / school</t></t>
+                        <div class="mb-3 col-md-6 form-check ms-2 mt-4">
+                            <input type="checkbox" class="form-check-input" name="hafiz" id="hafiz" value="1" t-att-checked="post.get('hafiz') or None"/>
+                            <label class="form-check-label" for="hafiz">I am Hafiz-e-Quran</label>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-lg mt-3">Submit application</button>
+                </form>
+            </div>
+        </t>
+    </template>
+
+    <template id="page_admission_thanks" name="Application received">
+        <t t-call="website.layout">
+            <div class="container py-5" style="max-width: 760px;">
+                <h1>Application received</h1>
+                <t t-if="admission">
+                    <p class="lead">Your application number is <strong t-out="admission.application_number"/>.</p>
+                    <p>Keep it safe. Entry test details, your merit position and any offer will appear on your status page:</p>
+                    <p><a t-att-href="admission.status_url()" class="btn btn-primary">Open my status page</a></p>
+                    <p class="text-muted">Bookmark that page. You can also find it with your application number and email under Check my application.</p>
+                </t>
+                <t t-else=""><p>Thank you.</p></t>
+            </div>
+        </t>
+    </template>
+
+    <template id="page_admission_lookup" name="Check my application">
+        <t t-call="website.layout">
+            <div class="container py-5" style="max-width: 560px;">
+                <h1>Check my application</h1>
+                <div t-if="error" class="alert alert-warning" t-out="error"/>
+                <form method="post" action="/admission/status">
+                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                    <div class="mb-3"><label class="form-label" for="application_number">Application number</label>
+                        <input type="text" class="form-control" name="application_number" id="application_number" required="required"/></div>
+                    <div class="mb-3"><label class="form-label" for="email">Email</label>
+                        <input type="email" class="form-control" name="email" id="email" required="required"/></div>
+                    <button type="submit" class="btn btn-primary">Show my status</button>
+                </form>
+            </div>
+        </t>
+    </template>
+
+    <template id="page_admission_status" name="Application status">
+        <t t-call="website.layout">
+            <div class="container py-5" style="max-width: 860px;">
+                <h1>Application <t t-out="admission.application_number"/></h1>
+                <p class="lead"><t t-out="admission.name"/>, <t t-out="admission.course_id.name"/> (<t t-out="admission.register_id.name"/>)</p>
+                <div class="card mb-3"><div class="card-body">
+                    <h5>Entry test</h5>
+                    <t t-if="admission.test_roll_no">
+                        <p>Roll number <strong t-out="admission.test_roll_no"/>,
+                           <t t-out="admission.entry_test_id.date" t-options="{'widget': 'date'}"/> at <t t-out="admission.entry_test_id.time_label()"/>,
+                           room <t t-out="admission.test_room_id.name or 'to be announced'"/>.</p>
+                        <a t-attf-href="#{admission.status_url()}/admit-card" class="btn btn-outline-primary btn-sm"><i class="fa fa-download"/> Admit card (PDF)</a>
+                    </t>
+                    <p t-else="" class="text-muted mb-0">Your roll number will appear here once the test is scheduled.</p>
+                </div></div>
+                <div class="card mb-3"><div class="card-body">
+                    <h5>Merit</h5>
+                    <t t-if="admission.merit_rank">
+                        <p class="mb-0">Merit position <strong t-out="admission.merit_rank"/>, aggregate <t t-out="'%.2f' % admission.aggregate"/>:
+                            <strong t-if="admission.merit_status == 'selected'" class="text-success">Selected</strong>
+                            <strong t-elif="admission.merit_status == 'waiting'" class="text-primary">Waiting list</strong>
+                            <strong t-else="">Not selected</strong></p>
+                    </t>
+                    <p t-else="" class="text-muted mb-0">The merit list has not been announced yet.</p>
+                </div></div>
+                <div class="card mb-3" t-if="admission.offer_sent_on"><div class="card-body">
+                    <h5>Offer</h5>
+                    <p>Pay the admission fee by <strong t-out="admission.offer_expires_on" t-options="{'widget': 'date'}"/> to keep your seat.</p>
+                    <a t-if="admission.admission_challan_id" t-attf-href="#{admission.status_url()}/challan" class="btn btn-primary btn-sm"><i class="fa fa-download"/> Admission fee challan (PDF)</a>
+                    <p t-if="admission.state == 'admission'" class="text-success mt-2 mb-0"><strong>Fee received: your seat is confirmed.</strong></p>
+                </div></div>
+            </div>
+        </t>
+    </template>
+</odoo>

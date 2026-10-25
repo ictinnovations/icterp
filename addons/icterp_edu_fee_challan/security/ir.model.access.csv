@@ -1,0 +1,15 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_fine_policy_user,fine policy user,model_icterp_fine_policy,openeducat_core.group_op_faculty,1,0,0,0
+access_fine_policy_manager,fine policy manager,model_icterp_fine_policy,openeducat_core.group_op_back_office_admin,1,1,1,1
+access_challan_user,challan user,model_icterp_fee_challan,openeducat_core.group_op_faculty,1,0,0,0
+access_challan_manager,challan manager,model_icterp_fee_challan,openeducat_core.group_op_back_office_admin,1,1,1,1
+access_challan_account,challan accountant,model_icterp_fee_challan,account.group_account_invoice,1,1,1,0
+access_scholarship_user,scholarship user,model_icterp_scholarship,openeducat_core.group_op_faculty,1,0,0,0
+access_scholarship_manager,scholarship manager,model_icterp_scholarship,openeducat_core.group_op_back_office_admin,1,1,1,1
+access_student_scholarship_user,student scholarship user,model_icterp_student_scholarship,openeducat_core.group_op_faculty,1,0,0,0
+access_student_scholarship_manager,student scholarship manager,model_icterp_student_scholarship,openeducat_core.group_op_back_office_admin,1,1,1,1
+access_generate_challans,generate challans,model_icterp_generate_challans,openeducat_core.group_op_back_office_admin,1,1,1,1
+access_confirm_payment,confirm payment,model_icterp_challan_confirm_payment,openeducat_core.group_op_back_office_admin,1,1,1,1
+access_confirm_payment_account,confirm payment accountant,model_icterp_challan_confirm_payment,account.group_account_invoice,1,1,1,1
+access_bank_import,bank import,model_icterp_challan_bank_import,openeducat_core.group_op_back_office_admin,1,1,1,1
+access_bank_import_account,bank import accountant,model_icterp_challan_bank_import,account.group_account_invoice,1,1,1,1

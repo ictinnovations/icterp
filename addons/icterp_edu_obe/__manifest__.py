@@ -1,0 +1,22 @@
+{
+    "name": "ICTERP Education: Outcome Based Education (OBE)",
+    "summary": "PEOs, PLOs and CLOs with Bloom levels, assessments and questions mapped to CLOs, CLO and PLO attainment for HEC/PEC accreditation",
+    "description": "OBE for ICTERP Education. Works with marks entered by hand or imported from ICTExam per question. See README.md.",
+    "version": "19.0.1.0.0",
+    "category": "Education",
+    "author": "ICT Innovations",
+    "website": "https://icterp.com",
+    "license": "LGPL-3",
+    "depends": ["icterp_edu_academics"],
+    "data": [
+        "security/ir.model.access.csv",
+        "views/outcome_views.xml",
+        "views/attainment_views.xml",
+        "views/academics_views.xml",
+        "views/res_config_settings_views.xml",
+        "wizard/plo_compute_views.xml",
+        "report/clo_report.xml",
+        "views/menus.xml",
+    ],
+    "installable": True,
+}

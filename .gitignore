@@ -1,0 +1,6 @@
+.env
+config/odoo.conf
+addons-vendor/
+__pycache__/
+*.pyc
+.DS_Store

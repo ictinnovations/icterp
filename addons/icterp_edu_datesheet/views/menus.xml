@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem id="menu_datesheets" name="Date sheets" parent="icterp_edu_academics.menu_academics_root" action="exam_schedule_action" sequence="50"/>
+    <menuitem id="menu_duties" name="Invigilation duties" parent="icterp_edu_academics.menu_academics_root" action="exam_duty_action" sequence="55"/>
+</odoo>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="res_config_settings_view_form_icterp" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.icterp</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="base_setup.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <!-- API Keys -->
+            <xpath expr="//block[@id='user_default_rights']/setting[not(@id)]" position="attributes">
+                <attribute name="help">API Keys allow your users to access ICTERP with external tools when multi-factor authentication is enabled.</attribute>
+            </xpath>
+            <xpath expr="//block[@id='pwa_settings']/setting[1]" position="attributes">
+                <attribute name="help">This name will be used for the application when ICTERP is installed through the browser.</attribute>
+            </xpath>
+            <xpath expr="//field[@name='web_app_name']" position="attributes">
+                <attribute name="placeholder">ICTERP</attribute>
+            </xpath>
+            <!-- Options that would install Odoo's paid online services (IAP) again -->
+            <xpath expr="//setting[@id='sms']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//setting[@id='partner_autocomplete']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//setting[@id='unsplash']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+        </field>
+    </record>
+</odoo>

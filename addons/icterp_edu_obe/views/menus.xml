@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem id="menu_obe_root" name="OBE" parent="openeducat_core.menu_op_school_root" sequence="45"/>
+    <menuitem id="menu_obe_class_clo" name="CLO attainment" parent="menu_obe_root" action="class_clo_action" sequence="10"/>
+    <menuitem id="menu_obe_student_plo" name="PLO attainment" parent="menu_obe_root" action="student_plo_action" sequence="20"/>
+    <menuitem id="menu_obe_compute" name="Compute attainment" parent="menu_obe_root" action="plo_compute_action" sequence="30"
+              groups="openeducat_core.group_op_back_office_admin"/>
+    <menuitem id="menu_obe_clo" name="CLOs" parent="menu_obe_root" action="clo_action" sequence="60"/>
+    <menuitem id="menu_obe_plo" name="PLOs" parent="menu_obe_root" action="plo_action" sequence="70"/>
+    <menuitem id="menu_obe_peo" name="PEOs" parent="menu_obe_root" action="peo_action" sequence="80"/>
+</odoo>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="bank_import_view_form" model="ir.ui.view">
+        <field name="name">icterp.challan.bank.import.form</field>
+        <field name="model">icterp.challan.bank.import</field>
+        <field name="arch" type="xml">
+            <form>
+                <div invisible="result_note" class="text-muted mb-2">
+                    CSV with a header row: <code>challan,paid_date,amount,reference</code>. Dates as 2026-10-24 or 24/10/2026.
+                    Late fines are added automatically from each challan's fine policy.
+                </div>
+                <group invisible="result_note">
+                    <field name="file" filename="filename"/>
+                    <field name="filename" invisible="1"/>
+                    <field name="journal_id"/>
+                </group>
+                <field name="result_note" invisible="not result_note" nolabel="1"/>
+                <footer>
+                    <button name="action_import" type="object" string="Import" class="btn-primary" invisible="result_note"/>
+                    <button string="Close" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+    <record id="bank_import_action" model="ir.actions.act_window">
+        <field name="name">Import bank file</field>
+        <field name="res_model">icterp.challan.bank.import</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+</odoo>

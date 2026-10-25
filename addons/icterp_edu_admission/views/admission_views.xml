@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_op_admission_register_form_merit" model="ir.ui.view">
+        <field name="name">op.admission.register.form.icterp.merit</field>
+        <field name="model">op.admission.register</field>
+        <field name="inherit_id" ref="openeducat_admission.view_op_admission_register_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header" position="inside">
+                <button name="action_generate_merit" type="object" string="Generate merit list"/>
+                <button name="action_open_merit_list" type="object" string="Merit list"/>
+                <button name="action_send_offers" type="object" string="Send offer letters" class="btn-primary"
+                        confirm="Email offer letters with admission fee challans to every selected applicant without an offer?"/>
+            </xpath>
+            <xpath expr="//notebook" position="inside">
+                <page string="Merit and online applications" name="merit">
+                    <group>
+                        <group string="Merit formula (weights are relative)">
+                            <field name="weight_matric"/>
+                            <field name="weight_inter"/>
+                            <field name="weight_test"/>
+                            <field name="weight_interview"/>
+                            <field name="hafiz_bonus"/>
+                            <field name="test_required"/>
+                        </group>
+                        <group string="Seats and offers">
+                            <field name="waiting_count"/>
+                            <field name="offer_valid_days"/>
+                            <field name="admission_fee"/>
+                            <field name="online"/>
+                            <field name="merit_generated_on"/>
+                        </group>
+                    </group>
+                    <field name="entry_test_ids" context="{'default_register_id': id}">
+                        <list>
+                            <field name="name"/>
+                            <field name="date"/>
+                            <field name="candidate_count"/>
+                            <field name="state"/>
+                        </list>
+                    </field>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_op_admission_form_merit" model="ir.ui.view">
+        <field name="name">op.admission.form.icterp.merit</field>
+        <field name="model">op.admission</field>
+        <field name="inherit_id" ref="openeducat_admission.view_op_admission_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header" position="inside">
+                <button name="action_send_offer" type="object" string="Send offer" invisible="merit_status != 'selected' or offer_sent_on"/>
+                <button name="%(icterp_edu_admission.action_report_admit_card)d" type="action" string="Admit card" invisible="not test_roll_no"/>
+            </xpath>
+            <xpath expr="//notebook" position="inside">
+                <page string="Academic record and merit" name="merit">
+                    <group>
+                        <group string="Previous results">
+                            <field name="matric_obtained"/>
+                            <field name="matric_total"/>
+                            <field name="inter_obtained"/>
+                            <field name="inter_total"/>
+                            <field name="board_name"/>
+                            <field name="passing_year"/>
+                            <field name="hafiz"/>
+                        </group>
+                        <group string="Entry test and interview">
+                            <field name="entry_test_id"/>
+                            <field name="test_roll_no"/>
+                            <field name="test_room_id"/>
+                            <field name="test_marks"/>
+                            <field name="test_taken" invisible="1"/>
+                            <field name="interview_marks"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Merit">
+                            <field name="matric_percent"/>
+                            <field name="inter_percent"/>
+                            <field name="test_percent"/>
+                            <field name="aggregate"/>
+                            <field name="merit_rank"/>
+                            <field name="merit_status"/>
+                        </group>
+                        <group string="Offer">
+                            <field name="offer_sent_on"/>
+                            <field name="offer_expires_on"/>
+                            <field name="admission_challan_id"/>
+                            <field name="applied_online"/>
+                        </group>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="admission_merit_view_list" model="ir.ui.view">
+        <field name="name">op.admission.merit.list</field>
+        <field name="model">op.admission</field>
+        <field name="priority">90</field>
+        <field name="arch" type="xml">
+            <list default_order="merit_rank" decoration-success="merit_status == 'selected'" decoration-info="merit_status == 'waiting'" decoration-muted="merit_status == 'not_selected'">
+                <field name="merit_rank"/>
+                <field name="application_number"/>
+                <field name="name"/>
+                <field name="course_id"/>
+                <field name="matric_percent"/>
+                <field name="inter_percent"/>
+                <field name="test_percent"/>
+                <field name="interview_marks" optional="hide"/>
+                <field name="hafiz" optional="show"/>
+                <field name="aggregate"/>
+                <field name="merit_status" widget="badge"/>
+                <field name="offer_sent_on" optional="show"/>
+                <field name="state" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_op_admission_search_merit" model="ir.ui.view">
+        <field name="name">op.admission.search.icterp.merit</field>
+        <field name="model">op.admission</field>
+        <field name="inherit_id" ref="openeducat_admission.view_op_admission_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//search" position="inside">
+                <filter name="ranked" string="Ranked" domain="[('merit_rank', '&gt;', 0)]"/>
+                <filter name="selected" string="Selected" domain="[('merit_status', '=', 'selected')]"/>
+                <filter name="waiting" string="Waiting list" domain="[('merit_status', '=', 'waiting')]"/>
+                <filter name="online" string="Applied online" domain="[('applied_online', '=', True)]"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

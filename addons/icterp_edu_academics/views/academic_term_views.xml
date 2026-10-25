@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_op_academic_term_form_registration" model="ir.ui.view">
+        <field name="name">op.academic.term.form.icterp</field>
+        <field name="model">op.academic.term</field>
+        <field name="inherit_id" ref="openeducat_core.view_op_academic_term_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet/group" position="after">
+                <group string="Registration dates" name="registration_dates">
+                    <group>
+                        <field name="registration_start"/>
+                        <field name="registration_end"/>
+                    </group>
+                    <group>
+                        <field name="drop_deadline"/>
+                        <field name="withdraw_deadline"/>
+                    </group>
+                </group>
+            </xpath>
+        </field>
+    </record>
+</odoo>

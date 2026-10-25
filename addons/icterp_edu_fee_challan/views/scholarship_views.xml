@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="scholarship_view_list" model="ir.ui.view">
+        <field name="name">icterp.scholarship.list</field>
+        <field name="model">icterp.scholarship</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="kind"/>
+                <field name="percent"/>
+                <field name="product_ids" widget="many2many_tags"/>
+            </list>
+        </field>
+    </record>
+    <record id="scholarship_view_form" model="ir.ui.view">
+        <field name="name">icterp.scholarship.form</field>
+        <field name="model">icterp.scholarship</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="kind"/>
+                            <field name="percent"/>
+                        </group>
+                        <group>
+                            <field name="product_ids" widget="many2many_tags"/>
+                            <field name="active"/>
+                        </group>
+                    </group>
+                    <field name="criteria" placeholder="Who qualifies"/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="scholarship_action" model="ir.actions.act_window">
+        <field name="name">Scholarship types</field>
+        <field name="res_model">icterp.scholarship</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <record id="student_scholarship_view_list" model="ir.ui.view">
+        <field name="name">icterp.student.scholarship.list</field>
+        <field name="model">icterp.student.scholarship</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="student_id"/>
+                <field name="scholarship_id"/>
+                <field name="percent"/>
+                <field name="date_from"/>
+                <field name="date_to"/>
+                <field name="state" widget="badge" decoration-success="state == 'approved'"/>
+            </list>
+        </field>
+    </record>
+    <record id="student_scholarship_view_form" model="ir.ui.view">
+        <field name="name">icterp.student.scholarship.form</field>
+        <field name="model">icterp.student.scholarship</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_approve" type="object" string="Approve" class="btn-primary" invisible="state != 'draft'"/>
+                    <button name="action_cancel" type="object" string="Cancel" invisible="state == 'cancelled'"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="student_id" readonly="state != 'draft'"/>
+                            <field name="scholarship_id" readonly="state != 'draft'"/>
+                            <field name="percent"/>
+                        </group>
+                        <group>
+                            <field name="date_from" readonly="state != 'draft'"/>
+                            <field name="date_to" readonly="state != 'draft'"/>
+                            <field name="approved_by"/>
+                        </group>
+                    </group>
+                    <field name="reason" placeholder="Why it was awarded"/>
+                    <field name="fee_line_ids" readonly="1" invisible="state != 'approved'">
+                        <list>
+                            <field name="product_id"/>
+                            <field name="date"/>
+                            <field name="amount"/>
+                            <field name="discount"/>
+                            <field name="after_discount_amount"/>
+                        </list>
+                    </field>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+    <record id="student_scholarship_action" model="ir.actions.act_window">
+        <field name="name">Scholarships awarded</field>
+        <field name="res_model">icterp.student.scholarship</field>
+        <field name="view_mode">list,form</field>
+    </record>
+</odoo>

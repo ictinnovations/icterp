@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="web_app_name" model="ir.config_parameter">
+        <field name="key">web.web_app_name</field>
+        <field name="value">ICTERP</field>
+    </record>
+    <!-- The system bot (OdooBot in Discuss and chatter) speaks as the ICTERP Assistant -->
+    <function model="res.partner" name="_icterp_brand_bot"/>
+    <!-- Stock email templates (user invitation, etc.) say ICTERP, not Odoo -->
+    <function model="mail.template" name="_icterp_debrand_templates"/>
+</odoo>

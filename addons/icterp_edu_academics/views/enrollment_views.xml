@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="enrollment_view_list" model="ir.ui.view">
+        <field name="name">icterp.enrollment.list</field>
+        <field name="model">icterp.enrollment</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="student_id"/>
+                <field name="term_id"/>
+                <field name="offering_id"/>
+                <field name="credit_hours"/>
+                <field name="state" widget="badge" decoration-success="state == 'completed'" decoration-muted="state == 'dropped'" decoration-warning="state == 'withdrawn'"/>
+                <field name="percentage"/>
+                <field name="grade_letter"/>
+                <field name="grade_points"/>
+                <field name="is_repeat" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="enrollment_view_form" model="ir.ui.view">
+        <field name="name">icterp.enrollment.form</field>
+        <field name="model">icterp.enrollment</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_drop" type="object" string="Drop" invisible="state != 'enrolled'"/>
+                    <button name="action_withdraw" type="object" string="Withdraw" invisible="state != 'enrolled'"/>
+                    <button name="action_reinstate" type="object" string="Reinstate" invisible="state not in ('dropped', 'withdrawn')" groups="openeducat_core.group_op_back_office_admin"/>
+                    <button name="%(icterp_edu_academics.grade_change_action)d" type="action" string="Change grade" invisible="not published"
+                            groups="openeducat_core.group_op_back_office_admin" context="{'default_enrollment_id': id}"/>
+                    <field name="state" widget="statusbar" statusbar_visible="enrolled,completed"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="student_id"/>
+                            <field name="offering_id"/>
+                            <field name="term_id"/>
+                            <field name="credit_hours"/>
+                            <field name="enrolled_on"/>
+                            <field name="changed_on" invisible="not changed_on"/>
+                            <field name="published" invisible="1"/>
+                        </group>
+                        <group>
+                            <field name="percentage"/>
+                            <field name="grade_letter"/>
+                            <field name="grade_points"/>
+                            <field name="is_pass"/>
+                            <field name="is_repeat"/>
+                            <field name="grade_override" invisible="not grade_override"/>
+                        </group>
+                    </group>
+                    <field name="mark_ids" readonly="1">
+                        <list>
+                            <field name="component_id"/>
+                            <field name="marks"/>
+                            <field name="max_marks"/>
+                            <field name="absent"/>
+                            <field name="source"/>
+                        </list>
+                    </field>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="enrollment_view_search" model="ir.ui.view">
+        <field name="name">icterp.enrollment.search</field>
+        <field name="model">icterp.enrollment</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="student_id"/>
+                <field name="offering_id"/>
+                <field name="term_id"/>
+                <filter name="active_reg" string="Enrolled" domain="[('state', '=', 'enrolled')]"/>
+                <filter name="failed" string="Failed" domain="[('state', '=', 'completed'), ('is_pass', '=', False)]"/>
+                <group>
+                    <filter name="by_term" string="Term" context="{'group_by': 'term_id'}"/>
+                    <filter name="by_student" string="Student" context="{'group_by': 'student_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="enrollment_action" model="ir.actions.act_window">
+        <field name="name">Course registrations</field>
+        <field name="res_model">icterp.enrollment</field>
+        <field name="view_mode">list,form</field>
+    </record>
+</odoo>

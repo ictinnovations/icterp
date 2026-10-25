@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="paperformat_challan" model="report.paperformat">
+        <field name="name">A4 landscape (challan)</field>
+        <field name="format">A4</field>
+        <field name="orientation">Landscape</field>
+        <field name="margin_top">8</field>
+        <field name="margin_bottom">8</field>
+        <field name="margin_left">6</field>
+        <field name="margin_right">6</field>
+        <field name="header_line" eval="False"/>
+        <field name="header_spacing">0</field>
+        <field name="dpi">90</field>
+    </record>
+
+    <record id="action_report_challan" model="ir.actions.report">
+        <field name="name">Fee challan</field>
+        <field name="model">icterp.fee.challan</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">icterp_edu_fee_challan.report_challan</field>
+        <field name="report_file">icterp_edu_fee_challan.report_challan</field>
+        <field name="print_report_name">'Challan %s' % object.name</field>
+        <field name="paperformat_id" ref="paperformat_challan"/>
+        <field name="binding_model_id" ref="model_icterp_fee_challan"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <template id="report_challan_copy">
+        <div style="border: 1px solid #333; padding: 8px; font-size: 11px;">
+            <table style="width: 100%; border-bottom: 1px solid #333; margin-bottom: 6px;">
+                <tr>
+                    <td>
+                        <img t-if="doc.company_id.logo" t-att-src="image_data_uri(doc.company_id.logo)" style="max-height: 36px;" alt=""/>
+                        <div style="font-weight: 700; font-size: 13px;" t-out="doc.company_id.name"/>
+                    </td>
+                    <td style="text-align: right; font-weight: 700; vertical-align: top;" t-out="copy_name"/>
+                </tr>
+            </table>
+            <table style="width: 100%; margin-bottom: 6px;">
+                <tr><td style="width: 38%">Challan no.</td><td style="font-weight: 700;" t-out="doc.name"/></tr>
+                <tr><td>Student</td><td t-out="doc.payer_name()"/></tr>
+                <tr><td>Roll number</td><td t-out="', '.join([r for r in doc.student_id.course_detail_ids.mapped('roll_number') if r]) or '-'"/></tr>
+                <tr><td>Programme</td><td t-out="', '.join(doc.student_id.course_detail_ids.mapped('course_id.name')) or '-'"/></tr>
+                <tr><td>Issue date</td><td t-out="doc.issue_date" t-options="{'widget': 'date'}"/></tr>
+                <tr><td>Due date</td><td style="font-weight: 700;" t-out="doc.due_date" t-options="{'widget': 'date'}"/></tr>
+            </table>
+            <div style="font-weight: 700; margin: 4px 0 2px;">Pay at</div>
+            <div t-foreach="doc.bank_ids" t-as="bank" style="margin-bottom: 2px;">
+                <t t-out="bank.bank_id.name or ''"/> <t t-out="bank.acc_number"/>
+                <t t-if="bank.acc_holder_name"> (<t t-out="bank.acc_holder_name"/>)</t>
+            </div>
+            <div t-if="not doc.bank_ids" style="color: #a00;">No bank account set (Settings, Companies, Challan bank accounts).</div>
+            <table style="width: 100%; border-collapse: collapse; margin-top: 6px;">
+                <tr style="border-bottom: 1px solid #333;"><th style="text-align: left;">Fee head</th><th style="text-align: right;">Amount</th></tr>
+                <tr t-foreach="doc.fee_heads()" t-as="h">
+                    <td t-out="h[0]"/>
+                    <td style="text-align: right;" t-out="h[1]" t-options="{'widget': 'monetary', 'display_currency': doc.currency_id}"/>
+                </tr>
+                <tr style="border-top: 1px solid #333; font-weight: 700;">
+                    <td>Payable by the due date</td>
+                    <td style="text-align: right;" t-out="doc.amount" t-options="{'widget': 'monetary', 'display_currency': doc.currency_id}"/>
+                </tr>
+            </table>
+            <div t-if="doc.fine_policy_id" style="margin-top: 6px;">
+                After the due date<t t-if="doc.fine_policy_id.grace_days"> plus <t t-out="doc.fine_policy_id.grace_days"/> days</t>:
+                <t t-if="doc.fine_policy_id.method == 'per_day'"><t t-out="doc.fine_policy_id.amount" t-options="{'widget': 'monetary', 'display_currency': doc.currency_id}"/> per day</t>
+                <t t-else=""><t t-out="doc.fine_policy_id.amount" t-options="{'widget': 'monetary', 'display_currency': doc.currency_id}"/></t>
+                <t t-if="doc.fine_policy_id.max_amount"> (at most <t t-out="doc.fine_policy_id.max_amount" t-options="{'widget': 'monetary', 'display_currency': doc.currency_id}"/>)</t>.
+            </div>
+            <div style="margin-top: 6px; color: #444;" t-out="doc.company_id.challan_instructions"/>
+            <table style="width: 100%; margin-top: 22px;"><tr><td>Bank stamp</td><td style="text-align: right;">Cashier signature</td></tr></table>
+        </div>
+    </template>
+
+    <template id="report_challan">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <div class="page">
+                    <table style="width: 100%; table-layout: fixed; border-collapse: separate; border-spacing: 6px 0;">
+                        <tr>
+                            <td style="vertical-align: top;"><t t-call="icterp_edu_fee_challan.report_challan_copy"><t t-set="copy_name">Bank copy</t></t></td>
+                            <td style="vertical-align: top;"><t t-call="icterp_edu_fee_challan.report_challan_copy"><t t-set="copy_name">Institute copy</t></t></td>
+                            <td style="vertical-align: top;"><t t-call="icterp_edu_fee_challan.report_challan_copy"><t t-set="copy_name">Student copy</t></t></td>
+                        </tr>
+                    </table>
+                </div>
+            </t>
+        </t>
+    </template>
+</odoo>

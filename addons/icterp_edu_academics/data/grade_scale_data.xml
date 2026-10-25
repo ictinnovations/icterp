@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <!-- A common Pakistani university scale (HEC style, 4.0). Edit it or add others under Education, Configuration. -->
+    <record id="grade_scale_hec" model="icterp.grade.scale">
+        <field name="name">4.0 scale (HEC style)</field>
+    </record>
+    <record id="g_a" model="icterp.grade.scale.line"><field name="scale_id" ref="grade_scale_hec"/><field name="letter">A</field><field name="min_percent">85</field><field name="points">4.0</field></record>
+    <record id="g_am" model="icterp.grade.scale.line"><field name="scale_id" ref="grade_scale_hec"/><field name="letter">A-</field><field name="min_percent">80</field><field name="points">3.67</field></record>
+    <record id="g_bp" model="icterp.grade.scale.line"><field name="scale_id" ref="grade_scale_hec"/><field name="letter">B+</field><field name="min_percent">75</field><field name="points">3.33</field></record>
+    <record id="g_b" model="icterp.grade.scale.line"><field name="scale_id" ref="grade_scale_hec"/><field name="letter">B</field><field name="min_percent">71</field><field name="points">3.0</field></record>
+    <record id="g_bm" model="icterp.grade.scale.line"><field name="scale_id" ref="grade_scale_hec"/><field name="letter">B-</field><field name="min_percent">68</field><field name="points">2.67</field></record>
+    <record id="g_cp" model="icterp.grade.scale.line"><field name="scale_id" ref="grade_scale_hec"/><field name="letter">C+</field><field name="min_percent">64</field><field name="points">2.33</field></record>
+    <record id="g_c" model="icterp.grade.scale.line"><field name="scale_id" ref="grade_scale_hec"/><field name="letter">C</field><field name="min_percent">61</field><field name="points">2.0</field></record>
+    <record id="g_cm" model="icterp.grade.scale.line"><field name="scale_id" ref="grade_scale_hec"/><field name="letter">C-</field><field name="min_percent">58</field><field name="points">1.67</field></record>
+    <record id="g_dp" model="icterp.grade.scale.line"><field name="scale_id" ref="grade_scale_hec"/><field name="letter">D+</field><field name="min_percent">54</field><field name="points">1.33</field></record>
+    <record id="g_d" model="icterp.grade.scale.line"><field name="scale_id" ref="grade_scale_hec"/><field name="letter">D</field><field name="min_percent">50</field><field name="points">1.0</field></record>
+    <record id="g_f" model="icterp.grade.scale.line"><field name="scale_id" ref="grade_scale_hec"/><field name="letter">F</field><field name="min_percent">0</field><field name="points">0</field><field name="is_pass" eval="False"/></record>
+</odoo>

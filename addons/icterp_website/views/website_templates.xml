@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- The Website app wraps /web/login in the public site layout (placeholder header and footer,
+         website colours). ICTERP keeps its own branded sign-in page instead. -->
+    <record id="website.login_layout" model="ir.ui.view">
+        <field name="active" eval="False"/>
+    </record>
+
+    <template id="layout_generator" inherit_id="website.layout" name="ICTERP generator tag">
+        <xpath expr="//meta[@name='generator']" position="attributes">
+            <attribute name="content">ICTERP</attribute>
+        </xpath>
+    </template>
+</odoo>

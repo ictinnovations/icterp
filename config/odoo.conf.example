@@ -1,0 +1,7 @@
+[options]
+addons_path = /mnt/extra-addons/vendor/openeducat,/mnt/extra-addons/vendor/payroll,/mnt/extra-addons/icterp,/usr/lib/python3/dist-packages/odoo/addons
+db_host = db
+db_user = odoo
+db_password = change-me
+admin_passwd = change-me-too
+list_db = True

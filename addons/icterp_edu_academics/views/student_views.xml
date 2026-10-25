@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_op_student_form_academics" model="ir.ui.view">
+        <field name="name">op.student.form.icterp.academics</field>
+        <field name="model">op.student</field>
+        <field name="inherit_id" ref="openeducat_core.view_op_student_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header" position="inside">
+                <button name="action_print_transcript" type="object" string="Transcript" icon="fa-file-text-o"
+                        groups="openeducat_core.group_op_back_office_admin"/>
+            </xpath>
+            <xpath expr="//notebook" position="inside">
+                <page string="Academic record" name="academic_record">
+                    <group>
+                        <group>
+                            <field name="cgpa"/>
+                            <field name="academic_standing"/>
+                        </group>
+                        <group>
+                            <field name="transcript_serial"/>
+                        </group>
+                    </group>
+                    <field name="term_result_ids" readonly="1">
+                        <list>
+                            <field name="term_id"/>
+                            <field name="credits_attempted"/>
+                            <field name="credits_earned"/>
+                            <field name="gpa"/>
+                            <field name="cgpa"/>
+                            <field name="standing"/>
+                        </list>
+                    </field>
+                    <field name="enrollment_ids" readonly="1">
+                        <list>
+                            <field name="term_id"/>
+                            <field name="offering_id"/>
+                            <field name="credit_hours"/>
+                            <field name="state"/>
+                            <field name="grade_letter"/>
+                            <field name="grade_points"/>
+                        </list>
+                    </field>
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo>

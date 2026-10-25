@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem id="menu_fee_collection" name="Fee collection" parent="openeducat_core.menu_op_school_root" sequence="50"/>
+    <menuitem id="menu_challans" name="Fee challans" parent="menu_fee_collection" action="challan_action" sequence="10"/>
+    <menuitem id="menu_generate_challans" name="Generate challans" parent="menu_fee_collection" action="generate_challans_action" sequence="20"/>
+    <menuitem id="menu_bank_import" name="Import bank file" parent="menu_fee_collection" action="bank_import_action" sequence="30"/>
+    <menuitem id="menu_student_scholarships" name="Scholarships awarded" parent="menu_fee_collection" action="student_scholarship_action" sequence="40"/>
+    <menuitem id="menu_scholarship_types" name="Scholarship types" parent="menu_fee_collection" action="scholarship_action" sequence="80"
+              groups="openeducat_core.group_op_back_office_admin"/>
+    <menuitem id="menu_fine_policies" name="Fine policies" parent="menu_fee_collection" action="fine_policy_action" sequence="90"
+              groups="openeducat_core.group_op_back_office_admin"/>
+</odoo>

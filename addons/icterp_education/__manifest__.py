@@ -1,0 +1,25 @@
+{
+    "name": "ICTERP Education",
+    "summary": "School, college and university management for ICTERP: students, admissions, timetable, attendance, exams, fees and library",
+    "description": "Runs the education apps (based on OpenEduCat Community, LGPL-3) under the ICTERP name. See README.md.",
+    "version": "19.0.1.0.0",
+    "category": "Education",
+    "author": "ICT Innovations",
+    "website": "https://icterp.com",
+    "license": "LGPL-3",
+    "depends": [
+        "icterp_branding",
+        "openeducat_erp",
+        "openeducat_timetable",
+        "openeducat_fees",
+        "openeducat_classroom",
+        "openeducat_facility",
+        "openeducat_activity",
+    ],
+    "data": [
+        "data/branding_data.xml",
+        "views/menus.xml",
+    ],
+    "installable": True,
+    "application": True,
+}

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Clearer top-level names in the ICTERP app switcher -->
+    <menuitem id="openeducat_core.menu_op_school_root" name="Education"/>
+    <menuitem id="openeducat_timetable.menu_op_timetable_root" name="Timetable"/>
+    <menuitem id="openeducat_attendance.menu_op_attendance_root" name="Attendance"/>
+</odoo>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Drop the "Learn More" links to odoo.com/app on the Apps cards -->
+    <record id="module_view_kanban_icterp" model="ir.ui.view">
+        <field name="name">ir.module.module.kanban.icterp</field>
+        <field name="model">ir.module.module</field>
+        <field name="inherit_id" ref="base.module_view_kanban"/>
+        <field name="arch" type="xml">
+            <xpath expr="//a[@t-att-href='record.website.raw_value' and hasclass('dropdown-item')]" position="replace"/>
+            <xpath expr="//a[@t-att-href='record.website.raw_value' and hasclass('btn')]" position="replace"/>
+            <!-- ICTERP icons for the apps ICTERP uses (models/ir_module.py); other modules keep theirs -->
+            <xpath expr="//field[@name='icon']" position="replace">
+                <field name="icterp_icon_url" widget="image_url" options="{'size': [50, 50]}" alt="Icon"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>
